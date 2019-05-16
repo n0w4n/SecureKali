@@ -8,14 +8,16 @@
 #---------------------Variables---------------------#
 
 # Current Version
-Version="1.2"
+Version="1.4"
 
 # Setup colors
+bold="\e[1m"
 cyan="\e[36m"
 green="\e[32m"
 red='\e[31m'
 yellow="\e[33m"
 orange="\e[38m"
+magenta="\e[95m"
 reset="\e[0m"
 
 # Variables for Data files & temp files
@@ -27,37 +29,27 @@ function logo () {
 	echo -e "
 /////////////////////////////////////////////////////////////////////////////////////////////   
 /////////////////////////////////////////////////////////////////////////////////////////////
-
-
                               
          ............         
-       ................       
-     .....          .....     
-     ....            ....     
-     ....            ....     
-     ....            ....     
-     ....            ....     
-    .....      .......'''.... 
- .''''''''''''';;;;;;;;;;;;;; 
- .''''''''''''';;;;;;;;;;;;;; 
- .''''''''''',cl:;;;;;;;;;;;; 
- .''''''''''cNNNNo;;;;;;;;;;; 
- .'''''''''';ONN0c;;;;;;;;;;; 
- .''''''''''''XN;;;;;;;;;;;;; 
- .''''''''''''0K;;;;;;;;;;;;; 
- .''''''''''''';;;;;;;;;;;;;,   created by$orange n0w4n $reset 
-  ..........................    version$orange $Version $reset
+       ................      	  _______  _______  _______           _______  _______ 
+     .....          .....    	(  ____ \(  ____ \(  ____ \|\     /|(  ____ )(  ____ \   
+     ....            ....    	| (    \/| (    \/| (    \/| )   ( || (    )|| (    \/ 
+     ....            ....    	| (_____ | (__    | |      | |   | || (____)|| (__     
+     ....            ....    	(_____  )|  __)   | |      | |   | ||     __)|  __)    
+     ....            ....    	      ) || (      | |      | |   | || (\ (   | (       
+    .....      .......'''....	/\____) || (____/\| (____/\| (___) || ) \ \__| (____/\ 
+ .''''''''''''';;;;;;;;;;;;;;	\_______)(_______/(_______/(_______)|/   \__/(_______/ 
+ .''''''''''''';;;;;;;;;;;;;;	  _        _______  _       _________ 
+ .''''''''''',cl:;;;;;;;;;;;;	| \    /\(  ___  )( \      \__   __/ 
+ .''''''''''cNNNNo;;;;;;;;;;;	|  \  / /| (   ) || (         ) (    
+ .'''''''''';ONN0c;;;;;;;;;;;	|  (_/ / | (___) || |         | |    
+ .''''''''''''XN;;;;;;;;;;;;;	|   _ (  |  ___  || |         | | 
+ .''''''''''''0K;;;;;;;;;;;;;	|  ( \ \ | (   ) || |         | |   
+ .''''''''''''';;;;;;;;;;;;;,	|  /  \ \| )   ( || (____/\___) (___    
+  .......................... 	|_/    \/|/     \|(_______/\_______/   
  
-  _______  _______  _______           _______  _______  _        _______  _       _________
-(  ____ \(  ____ \(  ____ \|\     /|(  ____ )(  ____ \| \    /\(  ___  )( \      \__   __/
-| (    \/| (    \/| (    \/| )   ( || (    )|| (    \/|  \  / /| (   ) || (         ) (   
-| (_____ | (__    | |      | |   | || (____)|| (__    |  (_/ / | (___) || |         | |   
-(_____  )|  __)   | |      | |   | ||     __)|  __)   |   _ (  |  ___  || |         | |   
-      ) || (      | |      | |   | || (\ (   | (      |  ( \ \ | (   ) || |         | |   
-/\____) || (____/\| (____/\| (___) || ) \ \__| (____/\|  /  \ \| )   ( || (____/\___) (___
-\_______)(_______/(_______/(_______)|/   \__/(_______/|_/    \/|/     \|(_______/\_______/
-
-
+									created by$orange n0w4n $reset
+									version$orange $Version $reset
 
 /////////////////////////////////////////////////////////////////////////////////////////////   
 /////////////////////////////////////////////////////////////////////////////////////////////                                                                                       
@@ -71,9 +63,9 @@ function header () {
 	padlength=70
 	check='[OK]'
 	title="$*"
-	printf '%s' "[-] $title"
+	printf "%s" "[-] $title"
 	printf '%*.*s' 0 $(( padlength - ${#title} - ${#check} )) "$pad"
-	printf '%s\n' "$check"
+	printf "$green%s$reset\n" "$check"
 }
 
 function headerS () {
@@ -83,7 +75,7 @@ function headerS () {
 	title="$*"
 	printf '%s' "[-] $title"
 	printf '%*.*s' 0 $(( padlength - ${#title} - ${#check} )) "$pad"
-	printf '%s\n' "$check"
+	printf "$magenta%s$reset\n" "$check"
 }
 
 function headerW () {
@@ -93,23 +85,35 @@ function headerW () {
 	title="$*"
 	printf '%s' "[-] $title"
 	printf '%*.*s' 0 $(( padlength - ${#title} - ${#check} )) "$pad"
-	printf '%s\n' "$check"
+	printf "$red%s$reset\n" "$check"
 }
 
 function headerF () {
-	pad=$(printf '%0.1s' "."{1..90})
+	pad=$(printf '%0.1s' ""{1..90})
 	padlength=70
 	check='[FALSE]'
 	title="$*"
 	printf '%s' "[-] $title"
 	printf '%*.*s' 0 $(( padlength - ${#title} - ${#check} )) "$pad"
-	printf '%s\n' "$check"
+	printf "$yellow%s$reset\n" "$check"
 }
 
-#-------------------dependancies-----------------#
+function line () {
+	pad=$(printf '%0.1s' "-"{1..90})
+	padlength=70
+	title="$*"
+	echo
+	printf "$cyan$bold%*.*s" 0 $(( padlength - ${#title} )) "$pad"
+	printf '%s' "[$title]"
+	printf "%s$reset\n\n" "-----"
+}
 
 clear
 logo
+
+#-------------------dependencies-----------------#
+
+line DEPENDENCIES
 
 # This program should run as root so the files cannot be tempered by lower privileged users
 if [[ $EUID -ne 0 ]]; then 
@@ -167,6 +171,8 @@ fi
 
 
 #-------------------Securing-----------------#
+
+line SECURITY
 
 # Place file on system with '0' as content, which will function as flag
 # This script will check this flag to see if it already ran
@@ -246,6 +252,8 @@ if [[ -z $? ]]; then
 else
 	headerW new SSH Keys are same as old ones \(hash check\)
 fi
+rm ./ssh-keys1.tmp
+rm ./ssh-keys2.tmp
 
 # Settings aliases on the system
 header placing list of aliases in .bash_aliases
@@ -254,6 +262,8 @@ echo "$(cat $aliases)" >> /home/$newUsername/.bash_aliases
 chown $newUsername:$newUsername /home/$newUsername/.bash_aliases
 
 #------------------Configuration---------------#
+
+line CONFIGURATION
 
 # setting postgresql to startup automatically and setting up database for metasploit framework
 header enabling postgresql for metasploit
@@ -283,6 +293,8 @@ header disable NTP service
 systemctl disable ntp 1> /dev/null
 
 #-------------------Installing-----------------#
+
+line INSTALLING
 
 # Downloading open-vm-tools
 dpkg -s open-vm-tools-desktop 1> /dev/null
@@ -483,6 +495,8 @@ header primary security update is complete
 read -p '[-] do you want to install additional packages? (yes/no) ' installMore
 
 #-------------------Optional-----------------#
+
+line OPTIONAL
 
 if [[ $installMore =~ [nN] ]]; then
 	header exiting
