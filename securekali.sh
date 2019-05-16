@@ -513,8 +513,6 @@ read -p '[-] do you want to install additional packages? (yes/no) ' installMore
 
 #-------------------Optional-----------------#
 
-line OPTIONAL
-
 if [[ $installMore =~ [nN] ]]; then
 	header exiting
 	echo "1" > /root/securing-kali-flag
@@ -522,6 +520,8 @@ if [[ $installMore =~ [nN] ]]; then
 	echo
 	exit 0
 else
+	line OPTIONAL
+	
 	header Installing
 	# checking for Empire
 	if [[ -d /opt/tools/empitre ]]; then
