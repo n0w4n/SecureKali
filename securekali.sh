@@ -115,30 +115,30 @@ fi
 dpkg -s wget &> /dev/null
 
 if [[ $? -eq 0 ]]; then
-	header locating installed package \"wget\"
+	header found wget
 else
+	header installing wget
 	apt install git -y &> /dev/null
-	header installing package \"wget\"
 fi
 
 # checking for wget
 dpkg -s git &> /dev/null
 
 if [[ $? -eq 0 ]]; then
-	header locating installed package \"git\"
+	header found git
 else
+	header installing git
 	apt install git -y &> /dev/null
-	header installing package \"git\"
 fi
 
 #checking for pip
 dpkg -s pip &> /dev/null
 
 if [[ $? -eq 0 ]]; then
-    header locating installed packages \"pip\"
+    header found pip
 else
+	header installing pip
 	apt install -y python-pip &> /dev/null
-	header installing package \"pip\"
 fi
 
 #checking for pip3
@@ -149,10 +149,10 @@ if [[ $? -eq 0 ]]; then
 	if [[ -z $? ]]; then
 		apt remove python3-pip &> /dev/null; apt install python3-pip -y &> /dev/null
 	fi
-    header locating installed packages \"pip3\"
+    header found pip3
 else
+	header installing pip3
 	apt install -y python3-pip &> /dev/null
-	header installing package \"pip3\"
 fi
 
 
@@ -209,14 +209,14 @@ header creating an unprivileged user
 if [[ ! -d /etc/ssh/old_keys ]]; then
 	mkdir /etc/ssh/old_keys
 fi
-mv /etc/ssh/ssh_host* /etc/ssh/old_keys
 header create backup of old SSH keys
+mv /etc/ssh/ssh_host* /etc/ssh/old_keys
 
 # Creating new SSH Keys
-dpkg-reconfigure openssh-server &> /dev/null
 header replacing old SSH keys with new ones
+dpkg-reconfigure openssh-server &> /dev/null
 # Verifying that new keys are different from old keys
-md5sum /etc/ssh/ssh_host* | sort -k 2 | awk '{print $1}' | > ./ssh-keys1.tmp
+md5sum /etc/ssh/ssh_host* | sort -k 2 | awk '{print $1}' > ./ssh-keys1.tmp
 md5sum /etc/ssh/old_keys/ssh_host* | sort -k 2 | awk '{print $1}' > ./ssh-keys2.tmp
 diff ./ssh-keys1.tmp ./ssh-keys2.tmp &> /dev/null
 if [[ -z $? ]]; then
@@ -226,37 +226,38 @@ else
 fi
 
 # Settings aliases on the system
+header placing list of aliases in .bash_aliases
 echo "$(cat $aliases)" >> /root/.bash_aliases
 echo "$(cat $aliases)" >> /home/$newUsername/.bash_aliases
 chown $newUsername:$newUsername /home/$newUsername/.bash_aliases
-header creating bash aliases
 
 #------------------Configuration---------------#
 
 # setting postgresql to startup automatically and setting up database for metasploit framework
-systemctl enable postgresql &> /dev/null
 header enabling postgresql for metasploit
-msfdb init &> /dev/null
+systemctl enable postgresql &> /dev/null
 header initializing metasploit database
+msfdb init &> /dev/null
 
 # disable SSH server
-systemctl disable ssh &> /dev/null
 header disable SSH server to run by default
+systemctl disable ssh &> /dev/null
 
 # disable log in as root (SSH)
 cat /etc/ssh/sshd_config | grep '\#PermitRootLogin*.*\#' &> /dev/null
 if [[ ! $? -eq 0 ]]; then
+	header disable PermitRootLogin in SSH server
 	sed -i 's/PermitRootLogin/\#PermitRootLogin/g' /etc/ssh/sshd_config
-	header disable \"PermitRootLogin\" in SSH server
 else
-	header \"PermitRootLogin\" in SSH server is disabled
+	header PermitRootLogin in SSH server is disabled
 fi
 
 # Downgrading Java
-update-alternatives --set java /usr/lib/jvm/java-8-openjdk-amd64/jre/bin/java
-header downgraded system to \"Java 8\"
+header downgrade system to Java 8
+update-alternatives --set java /usr/lib/jvm/java-8-openjdk-amd64/jre/bin/java &> /dev/null
 
 # Disable NTP service
+header disable NTP service
 systemctl disable ntp &> /dev/null
 
 #-------------------Installing-----------------#
@@ -265,35 +266,36 @@ systemctl disable ntp &> /dev/null
 dpkg -s open-vm-tools-desktop &> /dev/null
 
 if [[ $? -eq 0 ]]; then
-    header locating installed package \"open-vm-tools\"
+    header found open-vm-tools
 else
-    apt install -y open-vm-tools-desktop fuse &> /dev/null
-    header installing package \"open-vm-tools\"
+   header installing open-vm-tools
+   apt install -y open-vm-tools-desktop fuse &> /dev/null
 fi
 
 # Downloading Seclists on the system
 if [[ -d /usr/share/wordlists/seclists ]]; then
-    header locating wordlists \"seclists\"
+    header locating wordlists seclists
 else
+    header installing wordlists seclists
     git clone https://github.com/danielmiessler/SecLists.git /usr/share/wordlists/seclists &> /dev/null
-    header installing wordlists \"seclists\"
 fi
 
 # Downloading Impacket on the system
 if [[ -d /opt/tools/impacket ]]; then
-    header locating toolset \"impacket\"
+    header locating toolset impacket
 else
+    header installing toolset impacket
     git clone https://github.com/CoreSecurity/impacket.git /opt/tools/impacket &> /dev/null
     pip install . &> /dev/null
     python /opt/tools/impacket/setup.py build &> /dev/null
     python /opt/tools/impacket/setup.py install &> /dev/null
-    header installing toolset \"impacket\"
 fi
 
 # Downloading PenTest scripts on the system
 if [ -d /opt/scripts ]; then
 	header locating pentesting scripts
 else
+    header installing pentesting scripts
 	mkdir /opt/scripts/ && cd /opt/scripts
 	git clone https://github.com/rebootuser/LinEnum.git &> /dev/null
 	git clone https://github.com/sleventyeleven/linuxprivchecker.git &> /dev/null
@@ -308,23 +310,22 @@ else
     git clone https://github.com/cheetz/icmpshock &> /dev/null
     git clone https://github.com/cheetz/brutescrape &> /dev/null
     git clone https://www.github.com/cheetz/reddit_xss &> /dev/null
-    header installing pentesting scripts
 fi
 
 # Downloading dirsearch directory bruteforcer (similar like dirb and dirbuster)
 if [ -d /opt/tools/dirsearch ]; then
     header locating webfuzzer \"DirSearch\"
 else
-    git clone https://github.com/maurosoria/dirsearch.git /opt/tools/dirsearch &> /dev/null
     header installing webfuzzer \"DirSearch\"
+    git clone https://github.com/maurosoria/dirsearch.git /opt/tools/dirsearch &> /dev/null
 fi
 
 # Downloading gobuster directory bruteforcer (similar like dirb and dirbuster)
 if [ -d /opt/tools/gobuster ]; then
     header locating webfuzzer \"gobuster\"
 else
-    git clone https://github.com/OJ/gobuster.git /opt/tools/gobuster &> /dev/null
     header installing webfuzzer \"gobuster\"
+    git clone https://github.com/OJ/gobuster.git /opt/tools/gobuster &> /dev/null
 fi
 
 # Downloading asciinema
@@ -332,8 +333,8 @@ dpkg -s asciinema &> /dev/null
 if [[ $? -eq 0 ]]; then
 	header locating asciinema
 else
-	apt install -y asciinema &> /dev/null
 	header installing asciinema
+	apt install -y asciinema &> /dev/null
 fi
 
 # Downloading exiftool
@@ -341,8 +342,8 @@ dpkg -s libimage-exiftool-perl &> /dev/null
 if [[ $? -eq 0 ]]; then
 	header locating exiftool
 else
-	apt install -y exiftool &> /dev/null
 	header installing exiftool
+	apt install -y exiftool &> /dev/null
 fi
 
 # Downloading terminator
@@ -350,12 +351,12 @@ dpkg -s terminator &> /dev/null
 if [[ $? -eq 0 ]]; then
 	header locating terminator
 else
-	apt install -y terminator &> /dev/null
 	header installing terminator
+	apt install -y terminator &> /dev/null
 fi
 
-update-alternatives --set x-terminal-emulator /usr/bin/terminator &> /dev/null
 header setting terminator as default x-terminal-emulator
+update-alternatives --set x-terminal-emulator /usr/bin/terminator &> /dev/null
 
 #Downloading sublime3
 dpkg -s sublime-text &> /dev/null
@@ -363,60 +364,60 @@ dpkg -s sublime-text &> /dev/null
 if [[ $? -eq 0 ]]; then
     header locating sublime
 else
+	header installing sublime
     wget -qO - https://download.sublimetext.com/sublimehq-pub.gpg | sudo apt-key add - &> /dev/null
     echo "deb https://download.sublimetext.com/ apt/stable/" >> /etc/apt/sources.list.d/sublime-text.list
 	apt install -y sublime-text &> /dev/null
-	header installing sublime
 fi
 
 # Downloading cmsmap
 if [[ -d /opt/tools/cmsmap ]]; then
 	header locating cmsmap
 else
-	git clone https://github.com/Dionach/CMSmap /opt/tools/cmsmap &> /dev/null
 	header installing cmsmap
+	git clone https://github.com/Dionach/CMSmap /opt/tools/cmsmap &> /dev/null
 fi
 
 # Downloading patator
 if [[ -d /opt/tools/patator ]]; then
 	header locating patator
 else
-	git clone https://github.com/lanjelot/patator.git /opt/tools/patator &> /dev/null
 	header installing patator
+	git clone https://github.com/lanjelot/patator.git /opt/tools/patator &> /dev/null
 fi
 
 # Downloading hash-buster
 if [[ -d /opt/tools/hash-buster ]]; then
 	header locating hash-buster
 else
-	git clone https://github.com/s0md3v/Hash-Buster.git /opt/tools/hash-buster &> /dev/null
 	header installing hash-buster
+	git clone https://github.com/s0md3v/Hash-Buster.git /opt/tools/hash-buster &> /dev/null
 fi
 
 # Downloading JD-Gui (java decompiler)
 if [[ -d /opt/tools/jd-gui ]]; then
 	header locating jd-gui
 else
+	header installing jd-gui
 	git clone https://github.com/java-decompiler/jd-gui.git /opt/tools/jd-gui &> /dev/null
 	cd /opt/tools/jd-gui
 	./gradlew build &> /dev/null
-	header installing jd-gui
 fi
 
 # Downloading DNScan
 if [[ -d /opt/tools/dnscan ]]; then
 	header locating dnscan
 else
-	git clone https://github.com/rbsec/dnscan.git /opt/tools/dnscan &> /dev/null
 	header installing dnscan
+	git clone https://github.com/rbsec/dnscan.git /opt/tools/dnscan &> /dev/null
 fi
 
 # Downloading JXplorer
 if [[ -d /opt/tools/jxplorer ]]; then
 	header locating jxplorer
 else
-	git clone https://github.com/pegacat/jxplorer.git /opt/tools/jxplorer &> /dev/null
 	header installing jxplorer
+	git clone https://github.com/pegacat/jxplorer.git /opt/tools/jxplorer &> /dev/null
 fi
 
 #Downloading FTP
@@ -425,8 +426,8 @@ dpkg -s ftp &> /dev/null
 if [[ $? -eq 0 ]]; then
     header locating ftp
 else
-    apt install -y ftp &> /dev/null
 	header installing ftp
+	apt install -y ftp &> /dev/null
 fi
 
 #Downloading SNMP + MIBS
@@ -435,15 +436,15 @@ dpkg -s snmp &> /dev/null
 if [[ $? -eq 0 ]]; then
     header locating snmp
 else
+	header installing snmp
     apt install -y snmp snmp-mibs-downloader &> /dev/null
     varSnmp=$(cat /etc/snmp/snmp.conf.bak | grep -E '^[a-z]ibs \:')
     if [[ ! -z $varSnmp ]]; then
+    	header installing snmp
     	cp /etc/snmp/snmp.conf /etc/snmp/snmp.conf.bak
     	cat /etc/snmp/snmp.conf.bak | grep -E '^[a-z]ibs \:' | sed 's/mibs/\#mibs/g' > /etc/snmp/snmp.conf
     	download-mibs &> /dev/null
-    	header installing snmp
     fi
-	header installing snmp
 fi
 
 #Downloading Bloodhound
@@ -452,9 +453,8 @@ dpkg -s bloodhound &> /dev/null
 if [[ $? -eq 0 ]]; then
     header locating bloodhound
 else
-    apt install -y bloodhound &> /dev/null
-
 	header installing bloodhound
+    apt install -y bloodhound &> /dev/null
 fi
 
 header primary security update is complete
@@ -464,6 +464,7 @@ read -p '[-] do you want to install additional packages? (yes/no) ' installMore
 
 if [[ $installMore =~ [nN] ]]; then
 	header exiting
+	echo "1" > /root/securing-kali-flag
 	echo
 	echo
 	exit 0
@@ -471,18 +472,19 @@ else
 	header Installing
 	# checking for Empire
 	if [[ -d /opt/tools/empitre ]]; then
-	    header locating toolset \"empire\"
+	    header locating toolset empire
 	else
-	    headerS installing toolset \"empire\"
+	    headerS installing toolset empire
 	    git clone https://github.com/EmpireProject/Empire.git /opt/tools/empire &> /dev/null
 	    cd /opt/tools/empire/setup
 	    ./install.sh
 	    echo
-	    header installing toolset \"empire\"
+	    header installing toolset empire
 	fi
 fi
 
 header exiting
+echo "1" > /root/securing-kali-flag
 echo
 echo
 exit 0
