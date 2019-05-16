@@ -8,7 +8,7 @@
 #---------------------Variables---------------------#
 
 # Current Version
-Version="1.0"
+Version="1.2"
 
 # Setup colors
 cyan="\e[36m"
@@ -41,8 +41,8 @@ function logo () {
  .'''''''''';ONN0c;;;;;;;;;;; 
  .''''''''''''XN;;;;;;;;;;;;; 
  .''''''''''''0K;;;;;;;;;;;;; 
- .''''''''''''';;;;;;;;;;;;;, 
-  ..........................    created by$orange n0w4n $reset
+ .''''''''''''';;;;;;;;;;;;;,   created by$orange n0w4n $reset 
+  ..........................    version$orange $Version $reset
  
   _______  _______  _______           _______  _______  _        _______  _       _________
 (  ____ \(  ____ \(  ____ \|\     /|(  ____ )(  ____ \| \    /\(  ___  )( \      \__   __/
@@ -178,7 +178,7 @@ fi
 
 # Updating repository Kali
 headerS updating repository
-apt update
+apt update 1>/dev/null
 header updating repository
 
 # Upgrading packages
@@ -190,8 +190,13 @@ header upgrading packages
 headerS changing root password
 echo
 passwd root
-echo
-header changing root password
+if [[ $? -eq 10 ]]; then
+	echo
+	headerW root password has NOT changed
+else
+	echo
+	header changing root password
+fi
 
 # Creating an unpriv user
 headerS creating an unprivileged user
@@ -202,8 +207,14 @@ useradd -m -U -s /bin/bash $newUsername
 usermod -aG sudo $newUsername
 echo
 passwd $newUsername
-echo
-header creating an unprivileged user
+if [[ $? -eq 10 ]]; then
+	echo
+	headerW no password set for $newUsername
+	header creating an unprivileged user
+else
+	echo
+	header creating an unprivileged user
+fi
 
 # Backing up default SSH Keys
 if [[ ! -d /etc/ssh/old_keys ]]; then
