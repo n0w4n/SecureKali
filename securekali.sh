@@ -1,0 +1,488 @@
+#!/bin/bash
+
+# This script is to help securing Kali pentesting OS
+# in a semi-automated way.
+
+# Created by n0w4n
+
+#---------------------Variables---------------------#
+
+# Current Version
+Version="1.0"
+
+# Setup colors
+cyan="\e[36m"
+green="\e[32m"
+red='\e[31m'
+yellow="\e[33m"
+orange="\e[38m"
+reset="\e[0m"
+
+# Variables for Data files & temp files
+aliases="./aliases.txt"
+
+#---------------------functions---------------------#
+
+function logo () {
+	echo -e "
+                              
+         ............         
+       ................       
+     .....          .....     
+     ....            ....     
+     ....            ....     
+     ....            ....     
+     ....            ....     
+    .....      .......'''.... 
+ .''''''''''''';;;;;;;;;;;;;; 
+ .''''''''''''';;;;;;;;;;;;;; 
+ .''''''''''',cl:;;;;;;;;;;;; 
+ .''''''''''cNNNNo;;;;;;;;;;; 
+ .'''''''''';ONN0c;;;;;;;;;;; 
+ .''''''''''''XN;;;;;;;;;;;;; 
+ .''''''''''''0K;;;;;;;;;;;;; 
+ .''''''''''''';;;;;;;;;;;;;, 
+  ..........................  
+ 
+  _______  _______  _______           _______  _______  _        _______  _       _________
+(  ____ \(  ____ \(  ____ \|\     /|(  ____ )(  ____ \| \    /\(  ___  )( \      \__   __/
+| (    \/| (    \/| (    \/| )   ( || (    )|| (    \/|  \  / /| (   ) || (         ) (   
+| (_____ | (__    | |      | |   | || (____)|| (__    |  (_/ / | (___) || |         | |   
+(_____  )|  __)   | |      | |   | ||     __)|  __)   |   _ (  |  ___  || |         | |   
+      ) || (      | |      | |   | || (\ (   | (      |  ( \ \ | (   ) || |         | |   
+/\____) || (____/\| (____/\| (___) || ) \ \__| (____/\|  /  \ \| )   ( || (____/\___) (___
+\_______)(_______/(_______/(_______)|/   \__/(_______/|_/    \/|/     \|(_______/\_______/
+                                                                                          
+                            
+"
+}
+
+function header () {
+	pad=$(printf '%0.1s' "."{1..90})
+	padlength=70
+	check='[OK]'
+	title="$*"
+	printf '%s' "[-] $title"
+	printf '%*.*s' 0 $((padlength - ${#title} - ${#check} )) "$pad"
+	printf '%s\n' "$check"
+}
+
+function headerS () {
+	pad=$(printf '%0.1s' "."{1..90})
+	padlength=70
+	check='[STARTING]'
+	title="$*"
+	printf '%s' "[-] $title"
+	printf '%*.*s' 0 $((padlength - ${#title} - ${#check} )) "$pad"
+	printf '%s\n' "$check"
+}
+
+function headerW () {
+	pad=$(printf '%0.1s' "."{1..90})
+	padlength=70
+	check='[WARNING]'
+	title="$*"
+	printf '%s' "[-] $title"
+	printf '%*.*s' 0 $((padlength - ${#title} - ${#check} )) "$pad"
+	printf '%s\n' "$check"
+}
+
+function headerF () {
+	pad=$(printf '%0.1s' "."{1..90})
+	padlength=70
+	check='[FALSE]'
+	title="$*"
+	printf '%s' "[-] $title"
+	printf '%*.*s' 0 $((padlength - ${#title} - ${#check} )) "$pad"
+	printf '%s\n' "$check"
+}
+
+#-------------------dependancies-----------------#
+
+logo
+
+# This program should run as root so the files cannot be tempered by lower privileged users
+if [[ $EUID -ne 0 ]]; then 
+	headerW this script needs to run as root
+	exit 1
+else
+	header this script runs as root
+fi
+
+# Check for needed programs
+
+# checking for git
+dpkg -s wget &> /dev/null
+
+if [[ $? -eq 0 ]]; then
+	header locating installed package \"wget\"
+else
+	apt install git -y &> /dev/null
+	header installing package \"wget\"
+fi
+
+# checking for wget
+dpkg -s git &> /dev/null
+
+if [[ $? -eq 0 ]]; then
+	header locating installed package \"git\"
+else
+	apt install git -y &> /dev/null
+	header installing package \"git\"
+fi
+
+#checking for pip
+dpkg -s pip &> /dev/null
+
+if [[ $? -eq 0 ]]; then
+    header locating installed packages \"pip\"
+else
+	apt install -y python-pip &> /dev/null
+	header installing package \"pip\"
+fi
+
+#checking for pip3
+dpkg -s pip3 &> /dev/null
+
+if [[ $? -eq 0 ]]; then
+	pip3 --version &> /dev/null
+	if [[ -z $? ]]; then
+		apt remove python3-pip &> /dev/null; apt install python3-pip -y &> /dev/null
+	fi
+    header locating installed packages \"pip3\"
+else
+	apt install -y python3-pip &> /dev/null
+	header installing package \"pip3\"
+fi
+
+
+#-------------------Securing-----------------#
+
+# Place file on system with '0' as content, which will function as flag
+# This script will check this flag to see if it already ran
+if [[ ! -f /root/securing-kali-flag ]]; then
+	echo "0" > /root/securing-kali-flag
+	header placed file \"securing-kali-flag\" on system
+fi
+
+# Checking for script flag (check if script has already ran)
+checkFlag=$(cat /root/securing-kali-flag)
+if [[ ! $checkFlag == 0 ]]; then
+	header flag check
+	headerW exiting because scipt already ran on system
+	exit 0
+else
+	header flag check
+	header continuing script
+fi
+
+# Updating repository Kali
+headerS updating repository
+#apt update
+header updating repository
+
+# Upgrading packages
+headerS upgrading packages
+#apt full-upgrade -y
+header upgrading packages
+
+# Changing the default password
+headerS changing root password
+echo
+passwd root
+echo
+header changing root password
+
+# Creating an unpriv user
+headerS creating an unprivileged user
+echo
+read -p 'What is the new username? ' newUsername
+sleep 0.1
+useradd -m -U -s /bin/bash $newUsername
+usermod -aG sudo $newUsername
+echo
+passwd $newUsername
+echo
+header creating an unprivileged user
+
+# Backing up default SSH Keys
+if [[ ! -d /etc/ssh/old_keys ]]; then
+	mkdir /etc/ssh/old_keys
+fi
+mv /etc/ssh/ssh_host* /etc/ssh/old_keys
+header create backup of old SSH keys
+
+# Creating new SSH Keys
+dpkg-reconfigure openssh-server &> /dev/null
+header replacing old SSH keys with new ones
+# Verifying that new keys are different from old keys
+md5sum /etc/ssh/ssh_host* | sort -k 2 | awk '{print $1}' | > ./ssh-keys1.tmp
+md5sum /etc/ssh/old_keys/ssh_host* | sort -k 2 | awk '{print $1}' > ./ssh-keys2.tmp
+diff ./ssh-keys1.tmp ./ssh-keys2.tmp &> /dev/null
+if [[ -z $? ]]; then
+	header new SSH Keys are different \(hash check\)
+else
+	headerW new SSH Keys are same as old ones \(hash check\)
+fi
+
+# Settings aliases on the system
+echo "$(cat $aliases)" >> /root/.bash_aliases
+echo "$(cat $aliases)" >> /home/$newUsername/.bash_aliases
+chown $newUsername:$newUsername /home/$newUsername/.bash_aliases
+header creating bash aliases
+
+#------------------Configuration---------------#
+
+# setting postgresql to startup automatically and setting up database for metasploit framework
+systemctl enable postgresql &> /dev/null
+header enabling postgresql for metasploit
+msfdb init &> /dev/null
+header initializing metasploit database
+
+# disable SSH server
+systemctl disable ssh &> /dev/null
+header disable SSH server to run by default
+
+# disable log in as root (SSH)
+cat /etc/ssh/sshd_config | grep '\#PermitRootLogin*.*\#' &> /dev/null
+if [[ ! $? -eq 0 ]]; then
+	sed -i 's/PermitRootLogin/\#PermitRootLogin/g' /etc/ssh/sshd_config
+	header disable \"PermitRootLogin\" in SSH server
+else
+	header \"PermitRootLogin\" in SSH server is disabled
+fi
+
+# Downgrading Java
+update-alternatives --set java /usr/lib/jvm/java-8-openjdk-amd64/jre/bin/java
+header downgraded system to \"Java 8\"
+
+# Disable NTP service
+systemctl disable ntp &> /dev/null
+
+#-------------------Installing-----------------#
+
+# Downloading open-vm-tools
+dpkg -s open-vm-tools-desktop &> /dev/null
+
+if [[ $? -eq 0 ]]; then
+    header locating installed package \"open-vm-tools\"
+else
+    apt install -y open-vm-tools-desktop fuse &> /dev/null
+    header installing package \"open-vm-tools\"
+fi
+
+# Downloading Seclists on the system
+if [[ -d /usr/share/wordlists/seclists ]]; then
+    header locating wordlists \"seclists\"
+else
+    git clone https://github.com/danielmiessler/SecLists.git /usr/share/wordlists/seclists &> /dev/null
+    header installing wordlists \"seclists\"
+fi
+
+# Downloading Impacket on the system
+if [[ -d /opt/tools/impacket ]]; then
+    header locating toolset \"impacket\"
+else
+    git clone https://github.com/CoreSecurity/impacket.git /opt/tools/impacket &> /dev/null
+    pip install . &> /dev/null
+    python /opt/tools/impacket/setup.py build &> /dev/null
+    python /opt/tools/impacket/setup.py install &> /dev/null
+    header installing toolset \"impacket\"
+fi
+
+# Downloading PenTest scripts on the system
+if [ -d /opt/scripts ]; then
+	header locating pentesting scripts
+else
+	mkdir /opt/scripts/ && cd /opt/scripts
+	git clone https://github.com/rebootuser/LinEnum.git &> /dev/null
+	git clone https://github.com/sleventyeleven/linuxprivchecker.git &> /dev/null
+	git clone https://github.com/InteliSecureLabs/Linux_Exploit_Suggester.git &> /dev/null
+	git clone https://github.com/pentestmonkey/unix-privesc-check.git &> /dev/null
+	git clone https://github.com/Hack-with-Github/Windows.git &> /dev/null
+	git clone https://github.com/NullArray/AutoSploit.git &> /dev/null
+	git clone https://github.com/inquisb/icmpsh.git &> /dev/null
+    git clone https://github.com/cheetz/Easy-P.git &> /dev/null
+    git clone https://github.com/cheetz/Password_Plus_One &> /dev/null
+    git clone https://github.com/cheetz/PowerShell_Popup &> /dev/null
+    git clone https://github.com/cheetz/icmpshock &> /dev/null
+    git clone https://github.com/cheetz/brutescrape &> /dev/null
+    git clone https://www.github.com/cheetz/reddit_xss &> /dev/null
+    header installing pentesting scripts
+fi
+
+# Downloading dirsearch directory bruteforcer (similar like dirb and dirbuster)
+if [ -d /opt/tools/dirsearch ]; then
+    header locating webfuzzer \"DirSearch\"
+else
+    git clone https://github.com/maurosoria/dirsearch.git /opt/tools/dirsearch &> /dev/null
+    header installing webfuzzer \"DirSearch\"
+fi
+
+# Downloading gobuster directory bruteforcer (similar like dirb and dirbuster)
+if [ -d /opt/tools/gobuster ]; then
+    header locating webfuzzer \"gobuster\"
+else
+    git clone https://github.com/OJ/gobuster.git /opt/tools/gobuster &> /dev/null
+    header installing webfuzzer \"gobuster\"
+fi
+
+# Downloading asciinema
+dpkg -s asciinema &> /dev/null
+if [[ $? -eq 0 ]]; then
+	header locating asciinema
+else
+	apt install -y asciinema &> /dev/null
+	header installing asciinema
+fi
+
+# Downloading exiftool
+dpkg -s libimage-exiftool-perl &> /dev/null
+if [[ $? -eq 0 ]]; then
+	header locating exiftool
+else
+	apt install -y exiftool &> /dev/null
+	header installing exiftool
+fi
+
+# Downloading terminator
+dpkg -s terminator &> /dev/null
+if [[ $? -eq 0 ]]; then
+	header locating terminator
+else
+	apt install -y terminator &> /dev/null
+	header installing terminator
+fi
+
+update-alternatives --set x-terminal-emulator /usr/bin/terminator &> /dev/null
+header setting terminator as default x-terminal-emulator
+
+#Downloading sublime3
+dpkg -s sublime-text &> /dev/null
+
+if [[ $? -eq 0 ]]; then
+    header locating sublime
+else
+    wget -qO - https://download.sublimetext.com/sublimehq-pub.gpg | sudo apt-key add - &> /dev/null
+    echo "deb https://download.sublimetext.com/ apt/stable/" >> /etc/apt/sources.list.d/sublime-text.list
+	apt install -y sublime-text &> /dev/null
+	header installing sublime
+fi
+
+# Downloading cmsmap
+if [[ -d /opt/tools/cmsmap ]]; then
+	header locating cmsmap
+else
+	git clone https://github.com/Dionach/CMSmap /opt/tools/cmsmap &> /dev/null
+	header installing cmsmap
+fi
+
+# Downloading patator
+if [[ -d /opt/tools/patator ]]; then
+	header locating patator
+else
+	git clone https://github.com/lanjelot/patator.git /opt/tools/patator &> /dev/null
+	header installing patator
+fi
+
+# Downloading hash-buster
+if [[ -d /opt/tools/hash-buster ]]; then
+	header locating hash-buster
+else
+	git clone https://github.com/s0md3v/Hash-Buster.git /opt/tools/hash-buster &> /dev/null
+	header installing hash-buster
+fi
+
+# Downloading JD-Gui (java decompiler)
+if [[ -d /opt/tools/jd-gui ]]; then
+	header locating jd-gui
+else
+	git clone https://github.com/java-decompiler/jd-gui.git /opt/tools/jd-gui &> /dev/null
+	cd /opt/tools/jd-gui
+	./gradlew build &> /dev/null
+	header installing jd-gui
+fi
+
+# Downloading DNScan
+if [[ -d /opt/tools/dnscan ]]; then
+	header locating dnscan
+else
+	git clone https://github.com/rbsec/dnscan.git /opt/tools/dnscan &> /dev/null
+	header installing dnscan
+fi
+
+# Downloading JXplorer
+if [[ -d /opt/tools/jxplorer ]]; then
+	header locating jxplorer
+else
+	git clone https://github.com/pegacat/jxplorer.git /opt/tools/jxplorer &> /dev/null
+	header installing jxplorer
+fi
+
+#Downloading FTP
+dpkg -s ftp &> /dev/null
+
+if [[ $? -eq 0 ]]; then
+    header locating ftp
+else
+    apt install -y ftp &> /dev/null
+	header installing ftp
+fi
+
+#Downloading SNMP + MIBS
+dpkg -s snmp &> /dev/null
+
+if [[ $? -eq 0 ]]; then
+    header locating snmp
+else
+    apt install -y snmp snmp-mibs-downloader &> /dev/null
+    varSnmp=$(cat /etc/snmp/snmp.conf.bak | grep -E '^[a-z]ibs \:')
+    if [[ ! -z $varSnmp ]]; then
+    	cp /etc/snmp/snmp.conf /etc/snmp/snmp.conf.bak
+    	cat /etc/snmp/snmp.conf.bak | grep -E '^[a-z]ibs \:' | sed 's/mibs/\#mibs/g' > /etc/snmp/snmp.conf
+    	download-mibs &> /dev/null
+    	header installing snmp
+    fi
+	header installing snmp
+fi
+
+#Downloading Bloodhound
+dpkg -s bloodhound &> /dev/null
+
+if [[ $? -eq 0 ]]; then
+    header locating bloodhound
+else
+    apt install -y bloodhound &> /dev/null
+
+	header installing bloodhound
+fi
+
+header primary security update is complete
+read -p '[-] do you want to install additional packages? (yes/no) ' installMore
+
+#-------------------Optional-----------------#
+
+if [[ $installMore =~ [nN] ]]; then
+	header exiting
+	echo
+	echo
+	exit 0
+else
+	header Installing
+	# checking for Empire
+	if [[ -d /opt/tools/empitre ]]; then
+	    header locating toolset \"empire\"
+	else
+	    headerS installing toolset \"empire\"
+	    git clone https://github.com/EmpireProject/Empire.git /opt/tools/empire &> /dev/null
+	    cd /opt/tools/empire/setup
+	    ./install.sh
+	    echo
+	    header installing toolset \"empire\"
+	fi
+fi
+
+header exiting
+echo
+echo
+exit 0
