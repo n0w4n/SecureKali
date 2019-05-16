@@ -100,12 +100,12 @@ function headerF () {
 
 function line () {
 	pad=$(printf '%0.1s' "-"{1..90})
-	padlength=67
+	padlength=55
 	title="$*"
 	echo
 	printf "$cyan$bold%*.*s" 0 $(( padlength - ${#title} )) "$pad"
 	printf '%s' "[$title]"
-	printf "%s$reset\n\n" "-----"
+	printf "%s$reset\n\n" "-----------------"
 }
 
 clear
@@ -250,8 +250,9 @@ dpkg-reconfigure openssh-server &> /dev/null
 # Verifying that new keys are different from old keys
 md5sum /etc/ssh/ssh_host* | sort -k 2 | awk '{print $1}' > ./ssh-keys1.tmp
 md5sum /etc/ssh/old_keys/ssh_host* | sort -k 2 | awk '{print $1}' > ./ssh-keys2.tmp
-diff ./ssh-keys1.tmp ./ssh-keys2.tmp &> /dev/null
-if [[ -z $? ]]; then
+varDiff=$(diff ./ssh-keys1.tmp ./ssh-keys2.tmp)
+
+if [[ ! -z $varDiff ]]; then
 	header new SSH Keys are different \(hash check\)
 else
 	headerW new SSH Keys are same as old ones \(hash check\)
