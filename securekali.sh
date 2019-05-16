@@ -100,7 +100,7 @@ function headerF () {
 
 function line () {
 	pad=$(printf '%0.1s' "-"{1..90})
-	padlength=70
+	padlength=67
 	title="$*"
 	echo
 	printf "$cyan$bold%*.*s" 0 $(( padlength - ${#title} )) "$pad"
@@ -176,13 +176,13 @@ line SECURITY
 
 # Place file on system with '0' as content, which will function as flag
 # This script will check this flag to see if it already ran
-if [[ ! -f /root/securing-kali-flag ]]; then
-	echo "0" > /root/securing-kali-flag
-	header placed file \"securing-kali-flag\" on system
+if [[ ! -f /root/secure-kali-flag ]]; then
+	echo "0" > /root/secure-kali-flag
+	header placed file \"secure-kali-flag\" on system
 fi
 
 # Checking for script flag (check if script has already ran)
-checkFlag=$(cat /root/securing-kali-flag)
+checkFlag=$(cat /root/secure-kali-flag)
 if [[ ! $checkFlag == 0 ]]; then
 	header flag check
 	headerW exiting because scipt already ran on system
@@ -515,13 +515,13 @@ read -p '[-] do you want to install additional packages? (yes/no) ' installMore
 
 if [[ $installMore =~ [nN] ]]; then
 	header exiting
-	echo "1" > /root/securing-kali-flag
+	echo "1" > /root/secure-kali-flag
 	echo
 	echo
 	exit 0
 else
 	line OPTIONAL
-	
+
 	header Installing
 	# checking for Empire
 	if [[ -d /opt/tools/empitre ]]; then
@@ -537,7 +537,7 @@ else
 fi
 
 header exiting
-echo "1" > /root/securing-kali-flag
+echo "1" > /root/secure-kali-flag
 echo
 echo
 exit 0
