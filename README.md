@@ -1,5 +1,4 @@
 # SecureKali
-Securing Kali
 
 SecureKali is an semi-automated tool to secure your freshly installed Kali OS.
 
