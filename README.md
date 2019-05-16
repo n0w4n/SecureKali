@@ -7,9 +7,6 @@ But when using Kali as a real-time pentesting tool, it is wise to tweak it and m
 
 This script will tighten security on your Kali host, it will install common security tools and add well-known wordlists.
 
-## TODO
-
-- adding coloring scheme to output
 
 ## Downloading script
 
