@@ -178,12 +178,12 @@ fi
 
 # Updating repository Kali
 headerS updating repository
-#apt update
+apt update
 header updating repository
 
 # Upgrading packages
 headerS upgrading packages
-#apt full-upgrade -y
+apt full-upgrade -y
 header upgrading packages
 
 # Changing the default password
