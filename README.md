@@ -9,13 +9,16 @@ This script will tighten security on your Kali host, it will install common secu
 
 ## TODO
 
-1. adding coloring scheme to output
+- adding coloring scheme to output
 
-## Downloading and Running script
+## Downloading script
 
 ```
 root@kali[~]# git clone https://github.com/n0w4n/SecureKali.git
 ```
+
+## Running script
+
 ```
 root@kali[~]# cd SecureKali
 root@kali[~]# chmod +x securekali.sh
