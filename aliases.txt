@@ -1,0 +1,111 @@
+# BloodHound (creds = neo4j:neo4j)
+alias neo4j="neo4j console"
+
+# CMSmap
+alias cmsmap="/opt/tools/cmsmap/cmsmap.py"
+
+# dirsearch
+alias dirsearch="python3 /opt/tools/dirsearch/dirsearch.py"
+alias dirsearch-medium="python3 /opt/tools/dirsearch/dirsearch.py -t 50 -f -r -e php,html,htm,asp,aspx,cgi,txt,pdf -x 400,403,404,500 -w /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt --url"
+
+# feh image viewer
+alias image="feh"
+
+# cp (copy)
+alias cp="cp -i"
+
+# Firewall rules
+alias fwclear="iptables -F"
+alias fwchaindefault="iptables -P INPUT DROP && iptables -P FORWARD DROP && iptables -P OUTPUT DROP"
+alias fwlist="iptables -L"
+alias fwopen="iptables -I INPUT -j ACCEPT && iptables -I OUTPUT -j ACCEPT"
+alias fwout="iptables -I OUTPUT -o eth0 -d 0.0.0.0/0 -j ACCEPT && iptables -I INPUT -i eth0 -m state --state ESTABLISHED,RELATED -j ACCEPT"
+
+# grep
+alias grep="grep --color=always"
+
+# ip
+alias ip="ip --color a"
+
+# impacket
+alias impacket="cd /opt/tools/impacket/build/scripts-2.7/"
+
+# java decompiler
+alias java-decompiler="jd-gui"
+
+# locate
+alias locate="updatedb && locate"
+
+# ls
+alias ll="ls --color=always -lah"
+
+# mail
+alias mail="cd /var/mail"
+
+# metasploit
+alias msfconsole="systemctl start postgresql && msfdb reinit && msfconsole"
+
+# mkdir
+alias mkdir="mkdir -p -v"
+
+# mv (move)
+alias mv="mv -i"
+
+# nmap
+alias nmap="nmap -n -T4 --privileged --host-timeout 5m"
+alias nmap-ftp="nmap -sV -Pn -p21 --script=ftp-anon,ftp-bounce,ftp-libopie,ftp-proftpd-backdoor,ftp-syst,ftp-vsftpd-backdoor,ftp-vuln-cve2010-4221"
+alias nmap-full-1000="nmap -n -T4 -sV --version-intensity 5 -sC --script-updatedb -sS --privileged --host-timeout 5m --max-retries 3"
+alias nmap-full="nmap -n -T4 -sV --version-intensity 5 -sC --script-updatedb -sS --privileged --host-timeout 5m --max-retries 3 -p-"
+
+# nodejs scanner
+alias nodexp="python /opt/tools/nodexp/nodexp.py"
+
+# open ports
+alias lports="netstat -tulpen"
+alias lportss="ss -tupan"
+
+# patator - bruteforcing tool
+alias patator="python /opt/tools/patator/patator.py"
+
+# poweroff
+alias poweroff="sync && poweroff -f"
+
+# privesc scripts
+alias linenum="cd /opt/privesc/LinEnum/"
+
+# reboot
+alias reboot="sync && reboot"
+
+# record terminal
+alias record="/opt/tools/asciinema/record.sh"
+
+# Reconnoitre (OSCP scanner)
+alias reconnoitre="python /opt/tools/reconnoitre/Reconnoitre/reconnoitre.py"
+
+# SecList
+alias seclists="cd /usr/share/wordlists/seclists/"
+
+# SSH
+alias ssh-start="systemctl start ssh"
+alias ssh-stop="systemctl stop ssh"
+alias ssh-config="vim /etc/ssh/sshd_config"
+alias ssh-status="systemctl status ssh"
+
+# SimpleHTTPServer
+alias server="python -m SimpleHTTPServer"
+
+# Time - change time zone
+alias timezone="dpkg-reconfigure tzdata"
+
+# Tools
+alias tools="cd /opt/tools/"
+
+# update/upgrade system
+alias update="apt update"
+alias upgrade="apt update && apt full-upgrade -y && apt autoremove -y && apt clean"
+
+# wordlists
+alias wordlists="cd /usr/share/wordlists/"
+
+# wwwroot
+alias wwwroot="cd /var/www/html"
