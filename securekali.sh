@@ -63,7 +63,7 @@ function header () {
 	check='[OK]'
 	title="$*"
 	printf '%s' "[-] $title"
-	printf '%*.*s' 0 $((padlength - ${#title} - ${#check} )) "$pad"
+	printf '%*.*s' 0 $(( padlength - ${#title} - ${#check} )) "$pad"
 	printf '%s\n' "$check"
 }
 
@@ -73,7 +73,7 @@ function headerS () {
 	check='[STARTING]'
 	title="$*"
 	printf '%s' "[-] $title"
-	printf '%*.*s' 0 $((padlength - ${#title} - ${#check} )) "$pad"
+	printf '%*.*s' 0 $(( padlength - ${#title} - ${#check} )) "$pad"
 	printf '%s\n' "$check"
 }
 
@@ -83,7 +83,7 @@ function headerW () {
 	check='[WARNING]'
 	title="$*"
 	printf '%s' "[-] $title"
-	printf '%*.*s' 0 $((padlength - ${#title} - ${#check} )) "$pad"
+	printf '%*.*s' 0 $(( padlength - ${#title} - ${#check} )) "$pad"
 	printf '%s\n' "$check"
 }
 
@@ -93,7 +93,7 @@ function headerF () {
 	check='[FALSE]'
 	title="$*"
 	printf '%s' "[-] $title"
-	printf '%*.*s' 0 $((padlength - ${#title} - ${#check} )) "$pad"
+	printf '%*.*s' 0 $(( padlength - ${#title} - ${#check} )) "$pad"
 	printf '%s\n' "$check"
 }
 
@@ -178,12 +178,12 @@ fi
 
 # Updating repository Kali
 headerS updating repository
-apt update
+#apt update
 header updating repository
 
 # Upgrading packages
 headerS upgrading packages
-apt full-upgrade -y
+#apt full-upgrade -y
 header upgrading packages
 
 # Changing the default password
