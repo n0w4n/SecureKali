@@ -207,7 +207,7 @@ header upgrading packages
 headerS changing root password
 echo
 passwd root
-if [[ $? -eq 10 ]]; then
+if [[ ! $? -eq 0 ]]; then
 	echo
 	headerW root password has NOT changed
 else
@@ -219,19 +219,23 @@ fi
 headerS creating an unprivileged user
 echo
 read -p 'What is the new username? ' newUsername
-sleep 0.1
-useradd -m -U -s /bin/bash $newUsername
-usermod -aG sudo $newUsername
-echo
-passwd $newUsername
-if [[ $? -eq 10 ]]; then
-	echo
-	headerW no password set for $newUsername
-	header creating an unprivileged user
-else
-	echo
-	header creating an unprivileged user
-fi
+	sleep 0.1
+	useradd -m -s /bin/bash $newUsername
+	if [[ ! $? -eq 0 ]]; then
+		headerW unable to create an unprivileged user
+	else
+		usermod -aG sudo $newUsername
+		echo
+		passwd $newUsername
+		if [[ ! $? -eq 0 ]]; then
+			echo
+			headerW no password set for $newUsername
+			header creating an unprivileged user
+		else
+			echo
+			header creating an unprivileged user
+		fi
+	fi
 
 # Backing up default SSH Keys
 if [[ ! -d /etc/ssh/old_keys ]]; then
