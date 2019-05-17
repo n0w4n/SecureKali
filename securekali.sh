@@ -8,7 +8,7 @@
 #---------------------Variables---------------------#
 
 # Current Version
-Version="1.5"
+Version="1.5.1"
 
 # Setup colors
 bold="\e[1m"
@@ -21,6 +21,7 @@ magenta="\e[95m"
 reset="\e[0m"
 
 # Variables for Data files & temp files
+path="/opt/tools/"
 aliases="./aliases.txt"
 vmGuest=0
 
@@ -311,12 +312,6 @@ chown $newUsername:$newUsername /home/$newUsername/.bash_aliases
 
 line CONFIGURATION
 
-# setting postgresql to startup automatically and setting up database for metasploit framework
-header enabling postgresql for metasploit
-systemctl enable postgresql &> /dev/null
-header initializing metasploit database
-msfdb init &> /dev/null
-
 # disable SSH server
 header disable SSH server to run by default
 systemctl disable ssh &> /dev/null
@@ -551,6 +546,14 @@ else
 	header installing bloodhound
     apt install -y bloodhound &> /dev/null
 fi
+
+# downloading shells
+header downloading shell scripts
+wget --quiet http://pentestmonkey.net/tools/php-reverse-shell/php-reverse-shell-1.0.tar.gz -P /opt/tools/shells
+wget --quiet http://pentestmonkey.net/tools/perl-reverse-shell/perl-reverse-shell-1.0.tar.gz -P /opt/tools/shells
+sleep 0.1
+tar -C /opt/tools/shells --wildcards --no-anchored '*.php' -xzf /opt/tools/shells/php-reverse-shell-1.0.tar.gz --strip 1
+tar -C /opt/tools/shells --wildcards --no-anchored '*.pl' -xzf /opt/tools/shells/perl-reverse-shell-1.0.tar.gz --strip 1
 
 header primary security update is complete
 read -p '[-] do you want to install additional packages? (yes/no) ' installMore
