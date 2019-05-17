@@ -8,7 +8,7 @@
 #---------------------Variables---------------------#
 
 # Current Version
-Version="1.4.1"
+Version="1.5"
 
 # Setup colors
 bold="\e[1m"
@@ -22,6 +22,7 @@ reset="\e[0m"
 
 # Variables for Data files & temp files
 aliases="./aliases.txt"
+vmGuest=0
 
 #---------------------functions---------------------#
 
@@ -108,8 +109,18 @@ function line () {
 	printf "%s$reset\n\n" "-----------------"
 }
 
+function vmChecker () {
+	vmCheck=$(dmidecode -s system-manufacturer | grep -i 'vmware\|virtualbox')
+	if [[ ! -z $vmCheck ]]; then
+		vmGuest=1
+	else
+		vmGuest=0
+	fi
+}
+
 clear
 logo
+vmChecker
 
 #-------------------dependencies-----------------#
 
@@ -326,14 +337,16 @@ systemctl disable ntp &> /dev/null
 
 line INSTALLING
 
-# Downloading open-vm-tools
-dpkg -s open-vm-tools-desktop &> /dev/null
+if (( vmGuest = 1 )); then
+	# Downloading open-vm-tools
+	dpkg -s open-vm-tools-desktop &> /dev/null
 
-if [[ $? -eq 0 ]]; then
-    header found open-vm-tools
-else
-   header installing open-vm-tools
-   apt install -y open-vm-tools-desktop fuse &> /dev/null
+	if [[ $? -eq 0 ]]; then
+	    header found open-vm-tools
+	else
+	   header installing open-vm-tools
+	   apt install -y open-vm-tools-desktop fuse &> /dev/null
+	fi
 fi
 
 # Downloading Seclists on the system
