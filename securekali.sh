@@ -185,6 +185,11 @@ fi
 
 line SECURITY
 
+# Notification about running inside VM
+if (( vmGuest = 1 )); then
+	header running inside a Virtual Machine
+fi
+
 # Place file on system with '0' as content, which will function as flag
 # This script will check this flag to see if it already ran
 if [[ ! -f /root/secure-kali-flag ]]; then
