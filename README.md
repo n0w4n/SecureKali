@@ -8,17 +8,24 @@ But when using Kali as a real-time pentesting tool, it is wise to tweak it and m
 This script will tighten security on your Kali host, it will install common security tools and add well-known wordlists.
 
 
+*If you don't have git installed*
+
+```
+user@kali[~]# sudo apt update
+user@kali[~]# sudo apt install git -y
+```
+
 ## Downloading script
 
 ```
-root@kali[~]# git clone https://github.com/n0w4n/SecureKali.git
+user@kali[~]# git clone https://github.com/n0w4n/SecureKali.git
 ```
 
 ## Running script
 
 ```
-root@kali[~]# cd SecureKali
-root@kali[~]# chmod +x securekali.sh
-root@kali[~]# ./securekali.sh
+user@kali[~]# cd SecureKali
+user@kali[~]# chmod +x securekali.sh
+user@kali[~]# sudo ./securekali.sh
 ```
 
