@@ -8,7 +8,7 @@
 #---------------------Variables---------------------#
 
 # Current Version
-Version="1.4"
+Version="1.4.1"
 
 # Setup colors
 bold="\e[1m"
@@ -185,9 +185,17 @@ fi
 checkFlag=$(cat /root/secure-kali-flag)
 if [[ ! $checkFlag == 0 ]]; then
 	header flag check
-	headerW exiting because scipt already ran on system
+	headerW this scipt already ran on system
 	echo
-	exit 0
+	read -p '[-] continue to run script? (yes/no) ' varContinue
+	echo
+	if [[ $varContinue =~ [nN] ]]; then
+		echo
+		header exiting
+		exit 0
+	else
+		header continuing script
+	fi
 else
 	header flag check
 	header continuing script
@@ -195,13 +203,30 @@ fi
 
 # Updating repository Kali
 headerS updating repository
-apt update &> /dev/null
+apt update 2>/dev/null | grep 'packages can be upgraded' | awk '{print $1}' > ./update.tmp
 header updating repository
 
 # Upgrading packages
-headerS upgrading packages
-apt full-upgrade -y &> /dev/null
-header upgrading packages
+numberPackages=$(cat ./update.tmp)
+if [[ -z $numberPackages ]]; then
+	header no packages to upgrade
+	rm ./update.tmp
+elif (( numberPackages >= 1 && numberPackages <= 100 )); then
+	headerS upgrading \[$numberPackages\] packages
+	apt full-upgrade -y &> /dev/null
+	rm ./update.tmp
+	header upgraded packages
+elif (( numberPackages >= 101 && numberPackages <= 250 )); then
+	headerS upgrading \[$numberPackages\] packages \- be patient
+	apt full-upgrade -y &> /dev/null
+	rm ./update.tmp
+	header upgraded packages
+else
+	headerW upgrading \[$numberPackages\] packages \- this can take a while
+	apt full-upgrade -y &> /dev/null
+	rm ./update.tmp
+	header upgraded packages
+fi
 
 # Changing the default password
 headerS changing root password
