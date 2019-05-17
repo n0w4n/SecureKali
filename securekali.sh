@@ -229,17 +229,17 @@ if [[ -z $numberPackages ]]; then
 	rm ./update.tmp
 elif (( numberPackages >= 1 && numberPackages <= 100 )); then
 	headerS upgrading \[$numberPackages\] packages
-	apt full-upgrade -y &> /dev/null
+	apt full-upgrade -y
 	rm ./update.tmp
 	header upgraded packages
 elif (( numberPackages >= 101 && numberPackages <= 250 )); then
 	headerS upgrading \[$numberPackages\] packages \- be patient
-	apt full-upgrade -y &> /dev/null
+	apt full-upgrade -y
 	rm ./update.tmp
 	header upgraded packages
 else
 	headerW upgrading \[$numberPackages\] packages \- this can take a while
-	apt full-upgrade -y &> /dev/null
+	apt full-upgrade -y
 	rm ./update.tmp
 	header upgraded packages
 fi
