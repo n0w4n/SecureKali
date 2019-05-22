@@ -8,7 +8,7 @@
 #---------------------Variables---------------------#
 
 # Current Version
-Version="1.5.1"
+Version="1.5.2"
 
 # Setup colors
 bold="\e[1m"
@@ -119,6 +119,30 @@ function vmChecker () {
 	fi
 }
 
+function starWars () {
+	# check if there is an internet connection
+	internetCheck=$(ping -c1 1.1.1.1 | grep ' 0%')
+	if [[ ! -z $internetCheck ]]; then
+		# check if netcat is installed (is needed for star wars)
+		ncCheck=$(dpkg -s netcat 2>/dev/null || dpkg -s nc 2>/dev/null || dpkg -s netcat-traditional 2>/dev/null )
+		if [[ $? == 0 ]]; then
+			# check if xterm is installed (to open extra window)
+			xtermCheck=$(dpkg -s xterm 2>/dev/null)
+			if [[ $? == 0 ]]; then
+				headerS activating Star Wars
+				xterm -e /usr/bin/nc towel.blinkenlights.nl 23
+			fi
+		else
+			# check if telnet is installed (is needed for star wars)
+			telnetCheck=$(dpkg -s telnet 2>/dev/null)
+			if [[ $? == 0 ]]; then
+				headerS activating Star Wars
+				xterm -e /usr/bin/telnet towel.blinkenlights.nl
+			fi
+		fi
+	fi
+}
+
 clear
 logo
 vmChecker
@@ -202,7 +226,7 @@ fi
 checkFlag=$(cat /root/secure-kali-flag)
 if [[ ! $checkFlag == 0 ]]; then
 	header flag check
-	headerW this scipt already ran on system
+	headerW this script already ran on system
 	echo
 	read -p '[-] continue to run script? (yes/no) ' varContinue
 	echo
@@ -230,17 +254,21 @@ if [[ -z $numberPackages ]]; then
 	rm ./update.tmp
 elif (( numberPackages >= 1 && numberPackages <= 100 )); then
 	headerS upgrading \[$numberPackages\] packages
-	apt full-upgrade -y
+	xterm -e apt full-upgrade -y
 	rm ./update.tmp
 	header upgraded packages
 elif (( numberPackages >= 101 && numberPackages <= 250 )); then
 	headerS upgrading \[$numberPackages\] packages \- be patient
-	apt full-upgrade -y
+	# starts extra screen with star wars movie (ascii)
+	starWars
+	xterm -e apt full-upgrade -y
 	rm ./update.tmp
 	header upgraded packages
 else
 	headerW upgrading \[$numberPackages\] packages \- this can take a while
-	apt full-upgrade -y
+	# starts extra screen with star wars movie (ascii)
+	starWars
+	xterm -e apt full-upgrade -y
 	rm ./update.tmp
 	header upgraded packages
 fi
