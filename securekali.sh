@@ -1,7 +1,8 @@
 #!/bin/bash
 
-# This script is to help securing Kali pentesting OS
-# in a semi-automated way.
+# This script is to help securing Kali pentesting OS and 
+# install a lot of security tools and wordlists which are very handy
+# when doing pentesting.
 
 # Created by n0w4n
 
