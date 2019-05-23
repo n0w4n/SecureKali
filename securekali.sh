@@ -290,7 +290,7 @@ fi
 headerS creating an unprivileged user
 echo
 read -p 'What is the new username? ' newUsername
-	sleep 0.1
+	sleep 0.5
 	useradd -m -s /bin/bash $newUsername
 	if [[ ! $? -eq 0 ]]; then
 		echo
@@ -378,7 +378,7 @@ if (( vmGuest = 1 )); then
 	else
 	   header installing open-vm-tools
 	   xterm -e apt install -y open-vm-tools-desktop fuse
-	   sleep 0.1
+	   sleep 0.5
 	fi
 fi
 
@@ -388,7 +388,7 @@ if [[ -d /usr/share/wordlists/seclists ]]; then
 else
     header installing wordlists seclists
     xterm -e git clone https://github.com/danielmiessler/SecLists.git /usr/share/wordlists/seclists
-    sleep 0.1
+    sleep 0.5
 fi
 
 # Downloading Impacket on the system
@@ -397,7 +397,7 @@ if [[ -d /opt/tools/impacket ]]; then
 else
     header installing toolset impacket
     xterm -e git clone https://github.com/CoreSecurity/impacket.git /opt/tools/impacket
-    sleep 0.1
+    sleep 0.5
     pip install . &> /dev/null
     python /opt/tools/impacket/setup.py build &> /dev/null
     python /opt/tools/impacket/setup.py install &> /dev/null
@@ -410,29 +410,29 @@ else
     header installing pentesting scripts
 	mkdir /opt/scripts/ && cd /opt/scripts
 	xterm -e git clone https://github.com/rebootuser/LinEnum.git
-	sleep 0.1
+	sleep 0.5
 	xterm -e git clone https://github.com/sleventyeleven/linuxprivchecker.git
-	sleep 0.1
+	sleep 0.5
 	xterm -e git clone https://github.com/InteliSecureLabs/Linux_Exploit_Suggester.git
-	sleep 0.1
+	sleep 0.5
 	xterm -e git clone https://github.com/pentestmonkey/unix-privesc-check.git
-	sleep 0.1
+	sleep 0.5
 	xterm -e git clone https://github.com/Hack-with-Github/Windows.git
-	sleep 0.1
+	sleep 0.5
 	xterm -e git clone https://github.com/NullArray/AutoSploit.git
-	sleep 0.1
+	sleep 0.5
 	xterm -e git clone https://github.com/inquisb/icmpsh.git
-	sleep 0.1
+	sleep 0.5
     xterm -e git clone https://github.com/cheetz/Easy-P.git
-	sleep 0.1
+	sleep 0.5
     xterm -e git clone https://github.com/cheetz/Password_Plus_One
-	sleep 0.1
+	sleep 0.5
     xterm -e git clone https://github.com/cheetz/PowerShell_Popup
-	sleep 0.1
+	sleep 0.5
     xterm -e git clone https://github.com/cheetz/icmpshock
-	sleep 0.1
+	sleep 0.5
     xterm -e git clone https://github.com/cheetz/brutescrape
-	sleep 0.1
+	sleep 0.5
     xterm -e git clone https://www.github.com/cheetz/reddit_xss
 fi
 
@@ -442,7 +442,7 @@ if [ -d /opt/tools/dirsearch ]; then
 else
     header installing webfuzzer \"DirSearch\"
     xterm -e git clone https://github.com/maurosoria/dirsearch.git /opt/tools/dirsearch
-    sleep 0.1
+    sleep 0.5
 fi
 
 # Downloading gobuster directory bruteforcer (similar like dirb and dirbuster)
@@ -451,7 +451,7 @@ if [ -d /opt/tools/gobuster ]; then
 else
     header installing webfuzzer \"gobuster\"
     xterm -e git clone https://github.com/OJ/gobuster.git /opt/tools/gobuster
-    sleep 0.1
+    sleep 0.5
 fi
 
 # Downloading vim
@@ -461,7 +461,7 @@ if [[ $? -eq 0 ]]; then
 else
 	header installing vim
 	xterm -e apt install -y vim
-	sleep 0.1
+	sleep 0.5
 fi
 
 # Downloading asciinema
@@ -471,7 +471,7 @@ if [[ $? -eq 0 ]]; then
 else
 	header installing asciinema
 	xterm -e apt install -y asciinema
-	sleep 0.1
+	sleep 0.5
 fi
 
 # Downloading exiftool
@@ -481,7 +481,7 @@ if [[ $? -eq 0 ]]; then
 else
 	header installing exiftool
 	xterm -e apt install -y exiftool
-	sleep 0.1
+	sleep 0.5
 fi
 
 # Downloading terminator
@@ -491,7 +491,7 @@ if [[ $? -eq 0 ]]; then
 else
 	header installing terminator
 	xterm -e apt install -y terminator
-	sleep 0.1
+	sleep 0.5
 fi
 
 header setting terminator as default x-terminal-emulator
@@ -505,10 +505,10 @@ if [[ $? -eq 0 ]]; then
 else
 	header installing sublime
     xterm -e wget --no-check-certificate -qO - https://download.sublimetext.com/sublimehq-pub.gpg | sudo apt-key add -
-    sleep 0.1
+    sleep 0.5
     echo "deb https://download.sublimetext.com/ apt/stable/" >> /etc/apt/sources.list.d/sublime-text.list
 	xterm -e apt install -y sublime-text
-	sleep 0.1
+	sleep 0.5
 fi
 
 # Downloading cmsmap
@@ -517,7 +517,7 @@ if [[ -d /opt/tools/cmsmap ]]; then
 else
 	header installing cmsmap
 	xterm -e git clone https://github.com/Dionach/CMSmap /opt/tools/cmsmap
-	sleep 0.1
+	sleep 0.5
 fi
 
 # Downloading patator
@@ -526,7 +526,7 @@ if [[ -d /opt/tools/patator ]]; then
 else
 	header installing patator
 	xterm -e git clone https://github.com/lanjelot/patator.git /opt/tools/patator
-	sleep 0.1
+	sleep 0.5
 fi
 
 # Downloading hash-buster
@@ -535,7 +535,7 @@ if [[ -d /opt/tools/hash-buster ]]; then
 else
 	header installing hash-buster
 	xterm -e git clone https://github.com/s0md3v/Hash-Buster.git /opt/tools/hash-buster
-	sleep 0.1
+	sleep 0.5
 fi
 
 # Downloading JD-Gui (java decompiler)
@@ -544,12 +544,12 @@ if [[ -d /opt/tools/jd-gui ]]; then
 else
 	header installing jd-gui
 	xterm -e git clone https://github.com/java-decompiler/jd-gui.git /opt/tools/jd-gui
-	sleep 0.1
+	sleep 0.5
 	cd /opt/tools/jd-gui
 	# temporary upgrade java for installing purposes
 	update-alternatives --set java /usr/lib/jvm/java-11-openjdk-amd64/bin/java &> /dev/null
 	xterm -e ./gradlew build
-	sleep 0.1
+	sleep 0.5
 	# downgrading java again
 	update-alternatives --set java /usr/lib/jvm/java-8-openjdk-amd64/jre/bin/java &> /dev/null
 fi
@@ -560,7 +560,7 @@ if [[ -d /opt/tools/dnscan ]]; then
 else
 	header installing dnscan
 	xterm -e git clone https://github.com/rbsec/dnscan.git /opt/tools/dnscan
-	sleep 0.1
+	sleep 0.5
 fi
 
 # Downloading JXplorer
@@ -569,7 +569,7 @@ if [[ -d /opt/tools/jxplorer ]]; then
 else
 	header installing jxplorer
 	xterm -e git clone https://github.com/pegacat/jxplorer.git /opt/tools/jxplorer
-	sleep 0.1
+	sleep 0.5
 fi
 
 #Downloading FTP
@@ -580,7 +580,7 @@ if [[ $? -eq 0 ]]; then
 else
 	header installing ftp
 	xterm -e apt install -y ftp
-	sleep 0.1
+	sleep 0.5
 fi
 
 #Downloading SNMP + MIBS
@@ -591,7 +591,7 @@ if [[ $? -eq 0 ]]; then
 else
 	header installing snmp
     xterm -e apt install -y snmp snmp-mibs-downloader
-    sleep 0.1
+    sleep 0.5
     if [[ -f /etc/snmp/snmp.conf ]]; then
 	    varSnmp=$(cat /etc/snmp/snmp.conf.bak | grep -E '^[a-z]ibs \:')
 	    if [[ ! -z $varSnmp ]]; then
@@ -611,14 +611,14 @@ if [[ $? -eq 0 ]]; then
 else
 	header installing bloodhound
     xterm -e apt install -y bloodhound
-    sleep 0.1
+    sleep 0.5
 fi
 
 # downloading shells
 header downloading shell scripts
 wget --quiet http://pentestmonkey.net/tools/php-reverse-shell/php-reverse-shell-1.0.tar.gz -P /opt/tools/shells
 wget --quiet http://pentestmonkey.net/tools/perl-reverse-shell/perl-reverse-shell-1.0.tar.gz -P /opt/tools/shells
-sleep 0.1
+sleep 0.5
 tar -C /opt/tools/shells --wildcards --no-anchored '*.php' -xzf /opt/tools/shells/php-reverse-shell-1.0.tar.gz --strip 1
 tar -C /opt/tools/shells --wildcards --no-anchored '*.pl' -xzf /opt/tools/shells/perl-reverse-shell-1.0.tar.gz --strip 1
 
@@ -645,10 +645,10 @@ else
 	else
 	    headerS installing toolset empire
 	    xterm -e git clone https://github.com/EmpireProject/Empire.git /opt/tools/empire
-	    sleep 0.1
+	    sleep 0.5
 	    cd /opt/tools/empire/setup
 	    xterm -e ./install.sh
-	    sleep 0.1
+	    sleep 0.5
 	    echo
 	    header installing toolset empire
 	fi
