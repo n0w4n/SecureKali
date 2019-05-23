@@ -9,7 +9,7 @@
 #---------------------Variables---------------------#
 
 # Current Version
-Version="1.5.5"
+Version="1.5.6"
 
 # Setup colors
 bold="\e[1m"
@@ -504,9 +504,9 @@ if [[ $? -eq 0 ]]; then
     header found sublime
 else
 	header installing sublime
-    xterm -e wget --no-check-certificate -qO - https://download.sublimetext.com/sublimehq-pub.gpg | sudo apt-key add -
+    wget --quiet -qO - https://download.sublimetext.com/sublimehq-pub.gpg | sudo apt-key add - &> /dev/null
     sleep 0.5
-    echo "deb https://download.sublimetext.com/ apt/stable/" >> /etc/apt/sources.list.d/sublime-text.list
+    echo "deb https://download.sublimetext.com/ apt/stable/" > /etc/apt/sources.list.d/sublime-text.list
 	xterm -e apt install -y sublime-text
 	sleep 0.5
 fi
