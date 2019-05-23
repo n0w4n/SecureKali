@@ -9,7 +9,7 @@
 #---------------------Variables---------------------#
 
 # Current Version
-Version="1.5.4"
+Version="1.5.5"
 
 # Setup colors
 bold="\e[1m"
@@ -378,6 +378,7 @@ if (( vmGuest = 1 )); then
 	else
 	   header installing open-vm-tools
 	   xterm -e apt install -y open-vm-tools-desktop fuse
+	   sleep 0.1
 	fi
 fi
 
@@ -387,6 +388,7 @@ if [[ -d /usr/share/wordlists/seclists ]]; then
 else
     header installing wordlists seclists
     xterm -e git clone https://github.com/danielmiessler/SecLists.git /usr/share/wordlists/seclists
+    sleep 0.1
 fi
 
 # Downloading Impacket on the system
@@ -395,6 +397,7 @@ if [[ -d /opt/tools/impacket ]]; then
 else
     header installing toolset impacket
     xterm -e git clone https://github.com/CoreSecurity/impacket.git /opt/tools/impacket
+    sleep 0.1
     pip install . &> /dev/null
     python /opt/tools/impacket/setup.py build &> /dev/null
     python /opt/tools/impacket/setup.py install &> /dev/null
@@ -439,6 +442,7 @@ if [ -d /opt/tools/dirsearch ]; then
 else
     header installing webfuzzer \"DirSearch\"
     xterm -e git clone https://github.com/maurosoria/dirsearch.git /opt/tools/dirsearch
+    sleep 0.1
 fi
 
 # Downloading gobuster directory bruteforcer (similar like dirb and dirbuster)
@@ -447,6 +451,7 @@ if [ -d /opt/tools/gobuster ]; then
 else
     header installing webfuzzer \"gobuster\"
     xterm -e git clone https://github.com/OJ/gobuster.git /opt/tools/gobuster
+    sleep 0.1
 fi
 
 # Downloading vim
@@ -456,6 +461,7 @@ if [[ $? -eq 0 ]]; then
 else
 	header installing vim
 	xterm -e apt install -y vim
+	sleep 0.1
 fi
 
 # Downloading asciinema
@@ -465,6 +471,7 @@ if [[ $? -eq 0 ]]; then
 else
 	header installing asciinema
 	xterm -e apt install -y asciinema
+	sleep 0.1
 fi
 
 # Downloading exiftool
@@ -474,6 +481,7 @@ if [[ $? -eq 0 ]]; then
 else
 	header installing exiftool
 	xterm -e apt install -y exiftool
+	sleep 0.1
 fi
 
 # Downloading terminator
@@ -483,6 +491,7 @@ if [[ $? -eq 0 ]]; then
 else
 	header installing terminator
 	xterm -e apt install -y terminator
+	sleep 0.1
 fi
 
 header setting terminator as default x-terminal-emulator
@@ -496,8 +505,10 @@ if [[ $? -eq 0 ]]; then
 else
 	header installing sublime
     xterm -e wget --no-check-certificate -qO - https://download.sublimetext.com/sublimehq-pub.gpg | sudo apt-key add -
+    sleep 0.1
     echo "deb https://download.sublimetext.com/ apt/stable/" >> /etc/apt/sources.list.d/sublime-text.list
 	xterm -e apt install -y sublime-text
+	sleep 0.1
 fi
 
 # Downloading cmsmap
@@ -506,6 +517,7 @@ if [[ -d /opt/tools/cmsmap ]]; then
 else
 	header installing cmsmap
 	xterm -e git clone https://github.com/Dionach/CMSmap /opt/tools/cmsmap
+	sleep 0.1
 fi
 
 # Downloading patator
@@ -514,6 +526,7 @@ if [[ -d /opt/tools/patator ]]; then
 else
 	header installing patator
 	xterm -e git clone https://github.com/lanjelot/patator.git /opt/tools/patator
+	sleep 0.1
 fi
 
 # Downloading hash-buster
@@ -522,6 +535,7 @@ if [[ -d /opt/tools/hash-buster ]]; then
 else
 	header installing hash-buster
 	xterm -e git clone https://github.com/s0md3v/Hash-Buster.git /opt/tools/hash-buster
+	sleep 0.1
 fi
 
 # Downloading JD-Gui (java decompiler)
@@ -530,10 +544,12 @@ if [[ -d /opt/tools/jd-gui ]]; then
 else
 	header installing jd-gui
 	xterm -e git clone https://github.com/java-decompiler/jd-gui.git /opt/tools/jd-gui
+	sleep 0.1
 	cd /opt/tools/jd-gui
 	# temporary upgrade java for installing purposes
 	update-alternatives --set java /usr/lib/jvm/java-11-openjdk-amd64/bin/java &> /dev/null
 	xterm -e ./gradlew build
+	sleep 0.1
 	# downgrading java again
 	update-alternatives --set java /usr/lib/jvm/java-8-openjdk-amd64/jre/bin/java &> /dev/null
 fi
@@ -544,6 +560,7 @@ if [[ -d /opt/tools/dnscan ]]; then
 else
 	header installing dnscan
 	xterm -e git clone https://github.com/rbsec/dnscan.git /opt/tools/dnscan
+	sleep 0.1
 fi
 
 # Downloading JXplorer
@@ -552,6 +569,7 @@ if [[ -d /opt/tools/jxplorer ]]; then
 else
 	header installing jxplorer
 	xterm -e git clone https://github.com/pegacat/jxplorer.git /opt/tools/jxplorer
+	sleep 0.1
 fi
 
 #Downloading FTP
@@ -562,6 +580,7 @@ if [[ $? -eq 0 ]]; then
 else
 	header installing ftp
 	xterm -e apt install -y ftp
+	sleep 0.1
 fi
 
 #Downloading SNMP + MIBS
@@ -572,6 +591,7 @@ if [[ $? -eq 0 ]]; then
 else
 	header installing snmp
     xterm -e apt install -y snmp snmp-mibs-downloader
+    sleep 0.1
     if [[ -f /etc/snmp/snmp.conf ]]; then
 	    varSnmp=$(cat /etc/snmp/snmp.conf.bak | grep -E '^[a-z]ibs \:')
 	    if [[ ! -z $varSnmp ]]; then
@@ -591,6 +611,7 @@ if [[ $? -eq 0 ]]; then
 else
 	header installing bloodhound
     xterm -e apt install -y bloodhound
+    sleep 0.1
 fi
 
 # downloading shells
@@ -624,8 +645,10 @@ else
 	else
 	    headerS installing toolset empire
 	    xterm -e git clone https://github.com/EmpireProject/Empire.git /opt/tools/empire
+	    sleep 0.1
 	    cd /opt/tools/empire/setup
 	    xterm -e ./install.sh
+	    sleep 0.1
 	    echo
 	    header installing toolset empire
 	fi
