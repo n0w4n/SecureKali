@@ -434,6 +434,7 @@ else
     xterm -e git clone https://github.com/cheetz/brutescrape
 	sleep 0.5
     xterm -e git clone https://www.github.com/cheetz/reddit_xss
+    sleep 0.5
 fi
 
 # Downloading dirsearch directory bruteforcer (similar like dirb and dirbuster)
