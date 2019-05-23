@@ -9,7 +9,7 @@
 #---------------------Variables---------------------#
 
 # Current Version
-Version="1.5.2"
+Version="1.5.4"
 
 # Setup colors
 bold="\e[1m"
@@ -131,14 +131,14 @@ function starWars () {
 			xtermCheck=$(dpkg -s xterm 2>/dev/null)
 			if [[ $? == 0 ]]; then
 				headerS activating Star Wars
-				xterm -e /usr/bin/nc towel.blinkenlights.nl 23
+				xterm -e /usr/bin/nc towel.blinkenlights.nl 23 &
 			fi
 		else
 			# check if telnet is installed (is needed for star wars)
 			telnetCheck=$(dpkg -s telnet 2>/dev/null)
 			if [[ $? == 0 ]]; then
 				headerS activating Star Wars
-				xterm -e /usr/bin/telnet towel.blinkenlights.nl
+				xterm -e /usr/bin/telnet towel.blinkenlights.nl &
 			fi
 		fi
 	fi
@@ -169,7 +169,7 @@ if [[ $? -eq 0 ]]; then
 	header found wget
 else
 	header installing wget
-	apt install git -y &> /dev/null
+	xterm -e apt install git -y
 fi
 
 # checking for wget
@@ -179,7 +179,7 @@ if [[ $? -eq 0 ]]; then
 	header found git
 else
 	header installing git
-	apt install git -y &> /dev/null
+	xterm -e apt install git -y
 fi
 
 #checking for pip
@@ -189,7 +189,7 @@ if [[ $? -eq 0 ]]; then
     header found pip
 else
 	header installing pip
-	apt install -y python-pip &> /dev/null
+	xterm -e apt install -y python-pip
 fi
 
 #checking for pip3
@@ -203,7 +203,7 @@ if [[ $? -eq 0 ]]; then
     header found pip3
 else
 	header installing pip3
-	apt install -y python3-pip &> /dev/null
+	xterm -e apt install -y python3-pip
 fi
 
 
@@ -246,7 +246,7 @@ fi
 # Updating repository Kali
 headerS updating repository
 apt update 2>/dev/null | grep 'packages can be upgraded' | awk '{print $1}' > ./update.tmp
-header updating repository
+header repository updated
 
 # Upgrading packages
 numberPackages=$(cat ./update.tmp)
@@ -257,7 +257,7 @@ elif (( numberPackages >= 1 && numberPackages <= 100 )); then
 	headerS upgrading \[$numberPackages\] packages
 	xterm -e apt full-upgrade -y
 	rm ./update.tmp
-	header upgraded packages
+	header packages upgraded
 elif (( numberPackages >= 101 && numberPackages <= 250 )); then
 	headerS upgrading \[$numberPackages\] packages \- be patient
 	# starts extra screen with star wars movie (ascii)
@@ -271,7 +271,7 @@ else
 	starWars
 	xterm -e apt full-upgrade -y
 	rm ./update.tmp
-	header upgraded packages
+	header packages upgraded
 fi
 
 # Changing the default password
@@ -293,6 +293,7 @@ read -p 'What is the new username? ' newUsername
 	sleep 0.1
 	useradd -m -s /bin/bash $newUsername
 	if [[ ! $? -eq 0 ]]; then
+		echo
 		headerW unable to create an unprivileged user
 	else
 		usermod -aG sudo $newUsername
@@ -311,25 +312,25 @@ read -p 'What is the new username? ' newUsername
 # Backing up default SSH Keys
 if [[ ! -d /etc/ssh/old_keys ]]; then
 	mkdir /etc/ssh/old_keys
-fi
-header create backup of old SSH keys
-mv /etc/ssh/ssh_host* /etc/ssh/old_keys
+	header create backup of old SSH keys
+	mv /etc/ssh/ssh_host* /etc/ssh/old_keys
 
-# Creating new SSH Keys
-header replacing old SSH keys with new ones
-dpkg-reconfigure openssh-server &> /dev/null
-# Verifying that new keys are different from old keys
-md5sum /etc/ssh/ssh_host* | sort -k 2 | awk '{print $1}' > ./ssh-keys1.tmp
-md5sum /etc/ssh/old_keys/ssh_host* | sort -k 2 | awk '{print $1}' > ./ssh-keys2.tmp
-varDiff=$(diff ./ssh-keys1.tmp ./ssh-keys2.tmp)
+	# Creating new SSH Keys
+	header replacing old SSH keys with new ones
+	dpkg-reconfigure openssh-server &> /dev/null
+	# Verifying that new keys are different from old keys
+	md5sum /etc/ssh/ssh_host* | sort -k 2 | awk '{print $1}' > ./ssh-keys1.tmp
+	md5sum /etc/ssh/old_keys/ssh_host* | sort -k 2 | awk '{print $1}' > ./ssh-keys2.tmp
+	varDiff=$(diff ./ssh-keys1.tmp ./ssh-keys2.tmp)
 
-if [[ ! -z $varDiff ]]; then
-	header new SSH Keys are different \(hash check\)
-else
-	headerW new SSH Keys are same as old ones \(hash check\)
+	if [[ ! -z $varDiff ]]; then
+		header new SSH Keys are different \(hash check\)
+	else
+		headerW new SSH Keys are same as old ones \(hash check\)
+	fi
+	rm ./ssh-keys1.tmp
+	rm ./ssh-keys2.tmp
 fi
-rm ./ssh-keys1.tmp
-rm ./ssh-keys2.tmp
 
 # Settings aliases on the system
 header placing list of aliases in .bash_aliases
@@ -374,100 +375,100 @@ if (( vmGuest = 1 )); then
 	    header found open-vm-tools
 	else
 	   header installing open-vm-tools
-	   apt install -y open-vm-tools-desktop fuse &> /dev/null
+	   xterm -e apt install -y open-vm-tools-desktop fuse
 	fi
 fi
 
 # Downloading Seclists on the system
 if [[ -d /usr/share/wordlists/seclists ]]; then
-    header locating wordlists seclists
+    header found wordlists seclists
 else
     header installing wordlists seclists
-    git clone https://github.com/danielmiessler/SecLists.git /usr/share/wordlists/seclists &> /dev/null
+    xterm -e git clone https://github.com/danielmiessler/SecLists.git /usr/share/wordlists/seclists
 fi
 
 # Downloading Impacket on the system
 if [[ -d /opt/tools/impacket ]]; then
-    header locating toolset impacket
+    header found toolset impacket
 else
     header installing toolset impacket
-    git clone https://github.com/CoreSecurity/impacket.git /opt/tools/impacket &> /dev/null
-    pip install . &> /dev/null
-    python /opt/tools/impacket/setup.py build &> /dev/null
-    python /opt/tools/impacket/setup.py install &> /dev/null
+    xterm -e git clone https://github.com/CoreSecurity/impacket.git /opt/tools/impacket
+    xterm -e pip install .
+    xterm -e python /opt/tools/impacket/setup.py build
+    xterm -e python /opt/tools/impacket/setup.py install
 fi
 
 # Downloading PenTest scripts on the system
 if [ -d /opt/scripts ]; then
-	header locating pentesting scripts
+	header found pentesting scripts
 else
     header installing pentesting scripts
 	mkdir /opt/scripts/ && cd /opt/scripts
-	git clone https://github.com/rebootuser/LinEnum.git &> /dev/null
-	git clone https://github.com/sleventyeleven/linuxprivchecker.git &> /dev/null
-	git clone https://github.com/InteliSecureLabs/Linux_Exploit_Suggester.git &> /dev/null
-	git clone https://github.com/pentestmonkey/unix-privesc-check.git &> /dev/null
-	git clone https://github.com/Hack-with-Github/Windows.git &> /dev/null
-	git clone https://github.com/NullArray/AutoSploit.git &> /dev/null
-	git clone https://github.com/inquisb/icmpsh.git &> /dev/null
-    git clone https://github.com/cheetz/Easy-P.git &> /dev/null
-    git clone https://github.com/cheetz/Password_Plus_One &> /dev/null
-    git clone https://github.com/cheetz/PowerShell_Popup &> /dev/null
-    git clone https://github.com/cheetz/icmpshock &> /dev/null
-    git clone https://github.com/cheetz/brutescrape &> /dev/null
-    git clone https://www.github.com/cheetz/reddit_xss &> /dev/null
+	xterm -e git clone https://github.com/rebootuser/LinEnum.git
+	xterm -e git clone https://github.com/sleventyeleven/linuxprivchecker.git
+	xterm -e git clone https://github.com/InteliSecureLabs/Linux_Exploit_Suggester.git
+	xterm -e git clone https://github.com/pentestmonkey/unix-privesc-check.git
+	xterm -e git clone https://github.com/Hack-with-Github/Windows.git
+	xterm -e git clone https://github.com/NullArray/AutoSploit.git
+	xterm -e git clone https://github.com/inquisb/icmpsh.git
+    xterm -e git clone https://github.com/cheetz/Easy-P.git
+    xterm -e git clone https://github.com/cheetz/Password_Plus_One
+    xterm -e git clone https://github.com/cheetz/PowerShell_Popup
+    xterm -e git clone https://github.com/cheetz/icmpshock
+    xterm -e git clone https://github.com/cheetz/brutescrape
+    xterm -e git clone https://www.github.com/cheetz/reddit_xss
 fi
 
 # Downloading dirsearch directory bruteforcer (similar like dirb and dirbuster)
 if [ -d /opt/tools/dirsearch ]; then
-    header locating webfuzzer \"DirSearch\"
+    header found webfuzzer \"DirSearch\"
 else
     header installing webfuzzer \"DirSearch\"
-    git clone https://github.com/maurosoria/dirsearch.git /opt/tools/dirsearch &> /dev/null
+    xterm -e git clone https://github.com/maurosoria/dirsearch.git /opt/tools/dirsearch
 fi
 
 # Downloading gobuster directory bruteforcer (similar like dirb and dirbuster)
 if [ -d /opt/tools/gobuster ]; then
-    header locating webfuzzer \"gobuster\"
+    header found webfuzzer \"gobuster\"
 else
     header installing webfuzzer \"gobuster\"
-    git clone https://github.com/OJ/gobuster.git /opt/tools/gobuster &> /dev/null
+    xterm -e git clone https://github.com/OJ/gobuster.git /opt/tools/gobuster
 fi
 
 # Downloading vim
 dpkg -s vim &> /dev/null
 if [[ $? -eq 0 ]]; then
-	header locating vim
+	header found vim
 else
 	header installing vim
-	apt install -y vim &> /dev/null
+	xterm -e apt install -y vim
 fi
 
 # Downloading asciinema
 dpkg -s asciinema &> /dev/null
 if [[ $? -eq 0 ]]; then
-	header locating asciinema
+	header found asciinema
 else
 	header installing asciinema
-	apt install -y asciinema &> /dev/null
+	xterm -e apt install -y asciinema
 fi
 
 # Downloading exiftool
 dpkg -s libimage-exiftool-perl &> /dev/null
 if [[ $? -eq 0 ]]; then
-	header locating exiftool
+	header found exiftool
 else
 	header installing exiftool
-	apt install -y exiftool &> /dev/null
+	xterm -e apt install -y exiftool
 fi
 
 # Downloading terminator
 dpkg -s terminator &> /dev/null
 if [[ $? -eq 0 ]]; then
-	header locating terminator
+	header found terminator
 else
 	header installing terminator
-	apt install -y terminator &> /dev/null
+	xterm -e apt install -y terminator
 fi
 
 header setting terminator as default x-terminal-emulator
@@ -477,86 +478,86 @@ update-alternatives --set x-terminal-emulator /usr/bin/terminator &> /dev/null
 dpkg -s sublime-text &> /dev/null
 
 if [[ $? -eq 0 ]]; then
-    header locating sublime
+    header found sublime
 else
 	header installing sublime
-    wget -qO - https://download.sublimetext.com/sublimehq-pub.gpg | sudo apt-key add - &> /dev/null
+    xterm -e wget -qO - https://download.sublimetext.com/sublimehq-pub.gpg | sudo apt-key add -
     echo "deb https://download.sublimetext.com/ apt/stable/" >> /etc/apt/sources.list.d/sublime-text.list
-	apt install -y sublime-text &> /dev/null
+	xterm -e apt install -y sublime-text
 fi
 
 # Downloading cmsmap
 if [[ -d /opt/tools/cmsmap ]]; then
-	header locating cmsmap
+	header found cmsmap
 else
 	header installing cmsmap
-	git clone https://github.com/Dionach/CMSmap /opt/tools/cmsmap &> /dev/null
+	xterm -e git clone https://github.com/Dionach/CMSmap /opt/tools/cmsmap
 fi
 
 # Downloading patator
 if [[ -d /opt/tools/patator ]]; then
-	header locating patator
+	header found patator
 else
 	header installing patator
-	git clone https://github.com/lanjelot/patator.git /opt/tools/patator &> /dev/null
+	xterm -e git clone https://github.com/lanjelot/patator.git /opt/tools/patator
 fi
 
 # Downloading hash-buster
 if [[ -d /opt/tools/hash-buster ]]; then
-	header locating hash-buster
+	header found hash-buster
 else
 	header installing hash-buster
-	git clone https://github.com/s0md3v/Hash-Buster.git /opt/tools/hash-buster &> /dev/null
+	xterm -e git clone https://github.com/s0md3v/Hash-Buster.git /opt/tools/hash-buster
 fi
 
 # Downloading JD-Gui (java decompiler)
 if [[ -d /opt/tools/jd-gui ]]; then
-	header locating jd-gui
+	header found jd-gui
 else
 	header installing jd-gui
-	git clone https://github.com/java-decompiler/jd-gui.git /opt/tools/jd-gui &> /dev/null
+	xterm -e git clone https://github.com/java-decompiler/jd-gui.git /opt/tools/jd-gui
 	cd /opt/tools/jd-gui
 	# temporary upgrade java for installing purposes
 	update-alternatives --set java /usr/lib/jvm/java-11-openjdk-amd64/bin/java &> /dev/null
-	./gradlew build &> /dev/null
+	xterm -e ./gradlew build
 	# downgrading java again
 	update-alternatives --set java /usr/lib/jvm/java-8-openjdk-amd64/jre/bin/java &> /dev/null
 fi
 
 # Downloading DNScan
 if [[ -d /opt/tools/dnscan ]]; then
-	header locating dnscan
+	header found dnscan
 else
 	header installing dnscan
-	git clone https://github.com/rbsec/dnscan.git /opt/tools/dnscan &> /dev/null
+	xterm -e git clone https://github.com/rbsec/dnscan.git /opt/tools/dnscan
 fi
 
 # Downloading JXplorer
 if [[ -d /opt/tools/jxplorer ]]; then
-	header locating jxplorer
+	header found jxplorer
 else
 	header installing jxplorer
-	git clone https://github.com/pegacat/jxplorer.git /opt/tools/jxplorer &> /dev/null
+	xterm -e git clone https://github.com/pegacat/jxplorer.git /opt/tools/jxplorer
 fi
 
 #Downloading FTP
 dpkg -s ftp &> /dev/null
 
 if [[ $? -eq 0 ]]; then
-    header locating ftp
+    header found ftp
 else
 	header installing ftp
-	apt install -y ftp &> /dev/null
+	xterm -e apt install -y ftp
 fi
 
 #Downloading SNMP + MIBS
 dpkg -s snmp &> /dev/null
 
 if [[ $? -eq 0 ]]; then
-    header locating snmp
+    header found snmp
 else
 	header installing snmp
-    apt install -y snmp snmp-mibs-downloader &> /dev/null
+    xterm -e apt install -y snmp snmp-mibs-downloader
     varSnmp=$(cat /etc/snmp/snmp.conf.bak | grep -E '^[a-z]ibs \:')
     if [[ ! -z $varSnmp ]]; then
     	header installing snmp
@@ -570,22 +571,24 @@ fi
 dpkg -s bloodhound &> /dev/null
 
 if [[ $? -eq 0 ]]; then
-    header locating bloodhound
+    header found bloodhound
 else
 	header installing bloodhound
-    apt install -y bloodhound &> /dev/null
+    xterm -e apt install -y bloodhound
 fi
 
 # downloading shells
 header downloading shell scripts
-wget --quiet http://pentestmonkey.net/tools/php-reverse-shell/php-reverse-shell-1.0.tar.gz -P /opt/tools/shells
-wget --quiet http://pentestmonkey.net/tools/perl-reverse-shell/perl-reverse-shell-1.0.tar.gz -P /opt/tools/shells
+xterm -e wget http://pentestmonkey.net/tools/php-reverse-shell/php-reverse-shell-1.0.tar.gz -P /opt/tools/shells
+xterm -e wget http://pentestmonkey.net/tools/perl-reverse-shell/perl-reverse-shell-1.0.tar.gz -P /opt/tools/shells
 sleep 0.1
 tar -C /opt/tools/shells --wildcards --no-anchored '*.php' -xzf /opt/tools/shells/php-reverse-shell-1.0.tar.gz --strip 1
 tar -C /opt/tools/shells --wildcards --no-anchored '*.pl' -xzf /opt/tools/shells/perl-reverse-shell-1.0.tar.gz --strip 1
 
 header primary security update is complete
+echo
 read -p '[-] do you want to install additional packages? (yes/no) ' installMore
+echo
 
 #-------------------Optional-----------------#
 
@@ -601,12 +604,12 @@ else
 	header Installing
 	# checking for Empire
 	if [[ -d /opt/tools/empitre ]]; then
-	    header locating toolset empire
+	    header found toolset empire
 	else
 	    headerS installing toolset empire
-	    git clone https://github.com/EmpireProject/Empire.git /opt/tools/empire &> /dev/null
+	    xterm -e git clone https://github.com/EmpireProject/Empire.git /opt/tools/empire
 	    cd /opt/tools/empire/setup
-	    ./install.sh
+	    xterm -e ./install.sh
 	    echo
 	    header installing toolset empire
 	fi
