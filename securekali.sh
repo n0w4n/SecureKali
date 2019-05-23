@@ -347,12 +347,14 @@ header disable SSH server to run by default
 systemctl disable ssh &> /dev/null
 
 # disable log in as root (SSH)
-cat /etc/ssh/sshd_config | grep '\#PermitRootLogin*.*\#' &> /dev/null
-if [[ ! $? -eq 0 ]]; then
-	header disable PermitRootLogin in SSH server
-	sed -i 's/PermitRootLogin/\#PermitRootLogin/g' /etc/ssh/sshd_config
-else
-	header PermitRootLogin in SSH server is disabled
+if [[ -f /etc/ssh/sshd_config ]]; then
+	cat /etc/ssh/sshd_config | grep '\#PermitRootLogin*.*\#' &> /dev/null
+	if [[ ! $? -eq 0 ]]; then
+		header disable PermitRootLogin in SSH server
+		sed -i 's/PermitRootLogin/\#PermitRootLogin/g' /etc/ssh/sshd_config
+	else
+		header PermitRootLogin in SSH server is disabled
+	fi
 fi
 
 # Downgrading Java
@@ -393,9 +395,9 @@ if [[ -d /opt/tools/impacket ]]; then
 else
     header installing toolset impacket
     xterm -e git clone https://github.com/CoreSecurity/impacket.git /opt/tools/impacket
-    xterm -e pip install .
-    xterm -e python /opt/tools/impacket/setup.py build
-    xterm -e python /opt/tools/impacket/setup.py install
+    pip install . &> /dev/null
+    python /opt/tools/impacket/setup.py build &> /dev/null
+    python /opt/tools/impacket/setup.py install &> /dev/null
 fi
 
 # Downloading PenTest scripts on the system
@@ -405,17 +407,29 @@ else
     header installing pentesting scripts
 	mkdir /opt/scripts/ && cd /opt/scripts
 	xterm -e git clone https://github.com/rebootuser/LinEnum.git
+	sleep 0.1
 	xterm -e git clone https://github.com/sleventyeleven/linuxprivchecker.git
+	sleep 0.1
 	xterm -e git clone https://github.com/InteliSecureLabs/Linux_Exploit_Suggester.git
+	sleep 0.1
 	xterm -e git clone https://github.com/pentestmonkey/unix-privesc-check.git
+	sleep 0.1
 	xterm -e git clone https://github.com/Hack-with-Github/Windows.git
+	sleep 0.1
 	xterm -e git clone https://github.com/NullArray/AutoSploit.git
+	sleep 0.1
 	xterm -e git clone https://github.com/inquisb/icmpsh.git
+	sleep 0.1
     xterm -e git clone https://github.com/cheetz/Easy-P.git
+	sleep 0.1
     xterm -e git clone https://github.com/cheetz/Password_Plus_One
+	sleep 0.1
     xterm -e git clone https://github.com/cheetz/PowerShell_Popup
+	sleep 0.1
     xterm -e git clone https://github.com/cheetz/icmpshock
+	sleep 0.1
     xterm -e git clone https://github.com/cheetz/brutescrape
+	sleep 0.1
     xterm -e git clone https://www.github.com/cheetz/reddit_xss
 fi
 
@@ -481,7 +495,7 @@ if [[ $? -eq 0 ]]; then
     header found sublime
 else
 	header installing sublime
-    xterm -e wget -qO - https://download.sublimetext.com/sublimehq-pub.gpg | sudo apt-key add -
+    xterm -e wget --no-check-certificate -qO - https://download.sublimetext.com/sublimehq-pub.gpg | sudo apt-key add -
     echo "deb https://download.sublimetext.com/ apt/stable/" >> /etc/apt/sources.list.d/sublime-text.list
 	xterm -e apt install -y sublime-text
 fi
@@ -558,13 +572,15 @@ if [[ $? -eq 0 ]]; then
 else
 	header installing snmp
     xterm -e apt install -y snmp snmp-mibs-downloader
-    varSnmp=$(cat /etc/snmp/snmp.conf.bak | grep -E '^[a-z]ibs \:')
-    if [[ ! -z $varSnmp ]]; then
-    	header installing snmp
-    	cp /etc/snmp/snmp.conf /etc/snmp/snmp.conf.bak
-    	cat /etc/snmp/snmp.conf.bak | grep -E '^[a-z]ibs \:' | sed 's/mibs/\#mibs/g' > /etc/snmp/snmp.conf
-    	download-mibs &> /dev/null
-    fi
+    if [[ -f /etc/snmp/snmp.conf ]]; then
+	    varSnmp=$(cat /etc/snmp/snmp.conf.bak | grep -E '^[a-z]ibs \:')
+	    if [[ ! -z $varSnmp ]]; then
+	    	header installing snmp
+	    	cp /etc/snmp/snmp.conf /etc/snmp/snmp.conf.bak
+	    	cat /etc/snmp/snmp.conf.bak | grep -E '^[a-z]ibs \:' | sed 's/mibs/\#mibs/g' > /etc/snmp/snmp.conf
+	    	download-mibs &> /dev/null
+	    fi
+	fi
 fi
 
 #Downloading Bloodhound
@@ -579,8 +595,8 @@ fi
 
 # downloading shells
 header downloading shell scripts
-xterm -e wget http://pentestmonkey.net/tools/php-reverse-shell/php-reverse-shell-1.0.tar.gz -P /opt/tools/shells
-xterm -e wget http://pentestmonkey.net/tools/perl-reverse-shell/perl-reverse-shell-1.0.tar.gz -P /opt/tools/shells
+wget --quiet http://pentestmonkey.net/tools/php-reverse-shell/php-reverse-shell-1.0.tar.gz -P /opt/tools/shells
+wget --quiet http://pentestmonkey.net/tools/perl-reverse-shell/perl-reverse-shell-1.0.tar.gz -P /opt/tools/shells
 sleep 0.1
 tar -C /opt/tools/shells --wildcards --no-anchored '*.php' -xzf /opt/tools/shells/php-reverse-shell-1.0.tar.gz --strip 1
 tar -C /opt/tools/shells --wildcards --no-anchored '*.pl' -xzf /opt/tools/shells/perl-reverse-shell-1.0.tar.gz --strip 1
