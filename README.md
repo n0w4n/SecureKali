@@ -33,4 +33,4 @@ user@kali[~]# sudo ./securekali.sh
 
 When is a long list of packages that needs to be upgraded, there will be some entertainment in the form of Star Wars.
 
-<a href="https://asciinema.org/a/14?autoplay=1"><img src="https://asciinema.org/a/14.png" width="836"/></a>
+[![asciicast](https://asciinema.org/a/8.svg)](https://asciinema.org/a/8)
