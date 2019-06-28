@@ -9,7 +9,7 @@
 #---------------------Variables---------------------#
 
 # Current Version
-Version="1.5.6"
+Version="1.5.7"
 
 # Setup colors
 bold="\e[1m"
@@ -125,13 +125,19 @@ function starWars () {
 	internetCheck=$(ping -c1 1.1.1.1 | grep ' 0%')
 	if [[ ! -z $internetCheck ]]; then
 		# check if netcat is installed (is needed for star wars)
-		ncCheck=$(dpkg -s netcat 2>/dev/null || dpkg -s nc 2>/dev/null || dpkg -s netcat-traditional 2>/dev/null )
+		ncCheck=$(dpkg -s netcat || dpkg -s nc || dpkg -s netcat-traditional)
 		if [[ $? == 0 ]]; then
 			# check if xterm is installed (to open extra window)
 			xtermCheck=$(dpkg -s xterm 2>/dev/null)
 			if [[ $? == 0 ]]; then
 				headerS activating Star Wars
-				xterm -e /usr/bin/nc towel.blinkenlights.nl 23 &
+				if [[ -f /usr/bin/nc ]]; then
+					xterm -e /usr/bin/nc towel.blinkenlights.nl 23 &
+				elif [[ -f /usr/bin/netcat ]]; then
+					xterm -e /usr/bin/netcat towel.blinkenlights.nl 23 &
+				elif [[ -f /usr/bin/nc.traditional ]]; then
+					xterm -e /usr/bin/nc.traditional towel.blinkenlights.nl 23 &
+				fi
 			fi
 		else
 			# check if telnet is installed (is needed for star wars)
