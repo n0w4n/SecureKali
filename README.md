@@ -28,9 +28,3 @@ user@kali[~]# cd SecureKali
 user@kali[~]# chmod +x securekali.sh
 user@kali[~]# sudo ./securekali.sh
 ```
-
-## Star Wars
-
-When is a long list of packages that needs to be upgraded, there will be some entertainment in the form of Star Wars.
-
-[![asciicast](https://asciinema.org/a/8.svg)](https://asciinema.org/a/8)
