@@ -9,7 +9,7 @@
 #---------------------Variables---------------------#
 
 # Current Version
-Version="1.5.7"
+Version="1.5.8"
 
 # Setup colors
 bold="\e[1m"
@@ -267,14 +267,14 @@ elif (( numberPackages >= 1 && numberPackages <= 100 )); then
 elif (( numberPackages >= 101 && numberPackages <= 250 )); then
 	headerS upgrading \[$numberPackages\] packages \- be patient
 	# starts extra screen with star wars movie (ascii)
-	starWars
+	#starWars # to start this easter egg, remove the hash
 	xterm -e apt full-upgrade -y
 	rm ./update.tmp
 	header upgraded packages
 else
 	headerW upgrading \[$numberPackages\] packages \- this can take a while
 	# starts extra screen with star wars movie (ascii)
-	starWars
+	#starWars # to start this easter egg, remove the hash
 	xterm -e apt full-upgrade -y
 	rm ./update.tmp
 	header packages upgraded
@@ -292,28 +292,28 @@ else
 	header changing root password
 fi
 
-# Creating an unpriv user
-headerS creating an unprivileged user
-echo
-read -p 'What is the new username? ' newUsername
-	sleep 0.5
-	useradd -m -s /bin/bash $newUsername
-	if [[ ! $? -eq 0 ]]; then
-		echo
-		headerW unable to create an unprivileged user
-	else
-		usermod -aG sudo $newUsername
-		echo
-		passwd $newUsername
-		if [[ ! $? -eq 0 ]]; then
-			echo
-			headerW no password set for $newUsername
-			header creating an unprivileged user
-		else
-			echo
-			header creating an unprivileged user
-		fi
-	fi
+## Creating an unpriv user
+#headerS creating an unprivileged user
+#echo
+#read -p 'What is the new username? ' newUsername
+#	sleep 0.5
+#	useradd -m -s /bin/bash $newUsername
+#	if [[ ! $? -eq 0 ]]; then
+#		echo
+#		headerW unable to create an unprivileged user
+#	else
+#		usermod -aG sudo $newUsername
+#		echo
+#		passwd $newUsername
+#		if [[ ! $? -eq 0 ]]; then
+#			echo
+#			headerW no password set for $newUsername
+#			header creating an unprivileged user
+#		else
+#			echo
+#			header creating an unprivileged user
+#		fi
+#	fi
 
 # Backing up default SSH Keys
 if [[ ! -d /etc/ssh/old_keys ]]; then
@@ -631,7 +631,7 @@ tar -C /opt/tools/shells --wildcards --no-anchored '*.pl' -xzf /opt/tools/shells
 
 header primary security update is complete
 echo
-read -p '[-] do you want to install additional packages? (yes/no) ' installMore
+read -p '[-] do you want to install Empire? (yes/no) ' installMore
 echo
 
 #-------------------Optional-----------------#
